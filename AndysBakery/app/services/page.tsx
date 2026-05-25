@@ -15,67 +15,91 @@ import { useState } from "react";
 import { useCart } from "../context/cartContext";
 
 import Link from 'next/link';
+import { duration } from "drizzle-orm/gel-core";
 
 
 
 const services = [
   {
-
-    category: "Lashes",
+    category: "Cakes",
     items: [
-      { id: "wet-set", name: "Wet Set", price: 85, description: "A more dramatic look, with a glossy finish", duration: 180 },
-      { id: "hybrid-set", name: "Hybrid Set", price: 85, description: "A mix of classic and volume lashes for full and dramatic look", duration: 180 },
-      { id: "light-volume-set", name: "Light Volume Set", price: 85, description: "2 or 3 lash extension per natural lash for a subtle enhancement", duration: 180 },
-      { id: "volume-set", name: "Volume Set", price: 85, description: "4 or 5 lash extension per natural lash for a voluminous look", duration: 180 },
-      { id: "mega-volume-set", name: "Mega Volume Set", price: 85, description: "6 or more lash extension per natural lash for an extremely voluminous look ", duration: 180 },
-      { id: "wispy-volume-set", name: "Wispy Volume Set", price: 85, description: "4 or 5 lash extension per natural lash for a spiky look", duration: 180 },
-      { id: "full-set", name: "Classic Set", price: 85, description: "1 lash extension per natural lash", duration: 180 },
-      { id: "fill", name: "Fill", price: 65, description: "Refill and refresh existing lashes", duration: 120 },
-      { id: "lash-lift", name: "Lash Lift", price: 40, description: "Natural lash curl enhancement", duration: 30 },
-      { id: "lash-tint", name: "Lash Tint", price: 15, description: "Darkens lashes for fuller look", duration: 30 },
-    ]
+      {
+        id: "chocolate-cake",
+        name: "Chocolate Cake",
+        Price: 35,
+        duration: 0,
+        description: "Rich chocolate cake with buttercream frosting.",
+        sizes: [
+          // { size: '6"', price: 35 },
+          // { size: '10"', price: 65 },
+          // { size: '20"', price: 120 },
+        ],
+      },
+      {
+        id: "vanilla-cake",
+        name: "Vanilla Cake",
+        price: 35,
+        duration: 0,  
+        description: "Soft vanilla cake with classic frosting.",
+        sizes: [
+          // { size: '6"', price: 30 },
+          // { size: '10"', price: 60 },
+          // { size: '20"', price: 110 },
+        ],
+      },
+    ],
   },
   {
-    category: "Brows",
+    category: "Pastries",
     items: [
-      { id: "brow-wax", name: "Eyebrow Waxing", price: 20, description: "Shapes and cleans brow area", duration: 30 },
-      { id: "brow-razor", name: "Eyebrow Razor Clean Up", price: 10, description: "Quick brow touch-up cleanup", duration: 30 },
-      { id: "brow-tint", name: "Eyebrow Tint", price: 15, description: "Darkens brows for fuller look", duration: 30 },
-      { id: "brow-mapping", name: "Eyebrow Mapping", price: 15, description: "Precision brow shaping guide", duration: 30 },
-
-    ]
+      {
+        id: "croissant",
+        name: "Croissant",
+        price: 35,
+        duration: 0,
+        description: "Flaky butter pastry baked fresh.",
+        sizes: [
+          // { size: "Single", price: 4 },
+          // { size: "Half Dozen", price: 20 },
+          // { size: "Dozen", price: 38 },
+        ],
+      },
+    ],
   },
   {
-    category: "Waxing",
+    category: "Bread",
     items: [
-      { id: "underarms", name: "Underarms", price: 30, description: "Removes underarm hair smoothly", duration: 30 },
-      { id: "legs", name: "Legs", price: 60, description: "Full leg hair removal service", duration: 60 }, // TODO: ask how long max;  put 1 hour for the moment
-    ]
+      {
+        id: "sourdough",
+        name: "Sourdough Bread",
+        price: 35,
+        duration: 0,
+        description: "Fresh baked sourdough loaf.",
+        sizes: [
+          // { size: "Small", price: 6 },
+          // { size: "Medium", price: 9 },
+          // { size: "Large", price: 12 },
+        ],
+      },
+    ],
   },
   {
-    category: "Locs",
+    category: "Custom Orders",
     items: [
-      { id: "starter-locs", name: "Starter Locs", price: 150, description: "Begin your loc journey", duration: 180 },
-      { id: "retwist", name: "Retwist ", price: 125, description: "Maintain existing locs", duration: 120 },
-      { id: "style", name: "Style ADD ON", price: 25, description: "Style existing locs", duration: 60 },
-      { id: "half-head-locs", name: "Half a Head Locs (Retwist)", price: 100, description: "Maintain existing locs", duration: 90 },
-      { id: "half-head-style", name: "Style ADD ON", price: 20, description: "Style existing locks (half head)", duration: 60 },
-      { id: "flat-top", name: "Flat Top Retwist", price: 80, description: "Style existing locks", duration: 60 },
-    ]
+      {
+        id: "custom-cake",
+        name: "Custom Cake Order",
+        price: 35,
+        duration: 0,
+        description: "Custom pricing depends on size, flavor, and design.",
+        sizes: [
+            // { size: "Basic", price: 50 },
+            // { size: "Detailed", price: 100 },
+            // { size: "Premium", price: 150 },
+        ],
+      },
+    ],
   },
-  {
-    category: "Hair",
-    items: [
-      { id: "flat-iron", name: "Flat Iron", price: 80, description: "Smooth and straighten hair finish", duration: 60 },
-      { id: "shampoo-blowdry", name: "Shampoo and Blow Dry", price: 30, description: "Cleanse and styled blowout", duration: 30 },]
-  },
-  {
-    category: "Natural Styles",
-    items: [
-      { id: "two-strand-small", name: "Two Strand Small Twists", price: 150, description: "A natural two strand style (Small)", duration: 120 },
-      { id: "two-strand-medium", name: "Two Strand Medium Twists", price: 150, description: "A natural two strand style (Medium)", duration: 120 },
-      { id: "two-strand-large", name: "Two Strand Large Twists", price: 150, description: "A natural two strand style (Large)", duration: 120 },]
-  }
 ];
 
 
@@ -84,7 +108,8 @@ const services = [
 export default function Services() {
 
   // const router = useRouter() // used for cleaner redirects as buttons
-
+  const [openCategory, setOpenCategory] = useState<string | null>(null);
+  const [openItem, setOpenItem] = useState<string | null>(null);
   const { cart } = useCart();
   const { addToCart } = useCart();
   const { removeFromCart } = useCart();
@@ -140,8 +165,17 @@ export default function Services() {
 
             {services.map((category) => (
               <div key={category.category}>
-                <h2>{category.category}</h2>
-
+                <button
+                  onClick={() =>
+                    setOpenCategory(openCategory === category.category ? null : category.category)
+                  }
+                  className="w-full flex justify-between items-center text-left"
+                >
+                  <span>{category.category}</span>
+                  <span>{openCategory === category.category ? "▲" : "▼"}</span>
+                </button>
+              {openCategory === category.category && (
+                <>
                 {category.items.map((item) => {
                   const exists = cart.some((cartItem) => cartItem.id === item.id);
 
@@ -149,12 +183,34 @@ export default function Services() {
                     <div key={item.id} className={servicesCSS.servicesContainer}>
                       <div>
                         <div className={servicesCSS.textContent}>
-                          <p
-                            style={{ fontWeight: "bold" }}
-                            className={servicesCSS.heroParagraphServices}
+                          <button
+                            onClick={() =>
+                              setOpenItem(openItem === item.id ? null : item.id)
+                            }
+                            className="w-full flex justify-between items-center text-left"
                           >
-                            {item.name} - ${item.price}
-                          </p>
+                            <span>{item.name}</span>
+                            <span>{openItem === item.id ? "▲" : "▼"}</span>
+                          </button>
+                          {openItem === item.id && (
+                            <div style={{ padding: "10px 0" }}>
+                              <p>{item.description}</p>
+
+                              <p style={{ fontWeight: "bold" }}>
+                                Starting at ${item.price}
+                              </p>
+
+                              <p>
+                                Sizes:
+                               {item.sizes.map((size: { size: string; price: number }) => (
+                                  <span key={size.size}>
+                                    {" "}
+                                    {size.size} (${size.price})
+                                  </span>
+                                ))}
+                              </p>
+                            </div>
+                          )}
 
                           <p className={servicesCSS.heroParagraphServices}>
                             {item.description}
@@ -163,7 +219,14 @@ export default function Services() {
 
                         <div style={{ display: "flex", justifyContent: "center", width: "8rem" }}
                           onClick={() =>
-                            exists ? removeFromCart(item.id) : addToCart(item)
+                            exists
+                              ? removeFromCart(item.id)
+                              : addToCart({
+                                  id: item.id,
+                                  name: item.name,
+                                  price: item.price || 0,
+                                  duration: item.duration || 0,
+                                })
                           }
                           className={exists ? servicesCSS.removeBtn : servicesCSS.addBtn}
                         >
@@ -173,6 +236,8 @@ export default function Services() {
                     </div>
                   );
                 })}
+                </>
+               )} 
               </div>
 
             ))}
