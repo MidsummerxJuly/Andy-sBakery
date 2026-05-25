@@ -230,7 +230,7 @@ export default function Services() {
                           }
                           className={exists ? servicesCSS.removeBtn : servicesCSS.addBtn}
                         >
-                          {exists ? "Remove Service" : "Add Service"}
+                          {exists ? "Remove Treat" : "Add to Basket"}
                         </div>
                       </div>
                     </div>
@@ -246,14 +246,16 @@ export default function Services() {
 
           <div className={pageCSS.cartContainer}>
             {exists &&
-              <h2 className={pageCSS.cartTitle}>Selected Services</h2>
+             <h2 className={pageCSS.cartTitle}>
+                🍰 Your Basket <span>({cart.length})</span>
+             </h2>
             }
 
             {exists &&
               <table className={pageCSS.cartTable}>
                 <thead>
                   <tr>
-                    <th>Service</th>
+                    <th>Treat</th>
                     <th>Duration</th>
                     <th>Price</th>
                     <th></th>
