@@ -6,13 +6,17 @@ export type CartItem = {
   id: string;
   name: string;
   price: number;
-  duration: number; // prob makes sense to just track it from the beginning // in minutes
+  duration: number;
+  quantity: number; // Add quantity to track how many of each item is in the cart
 };
 
 type CartContextType = {
   cart: CartItem[];
   addToCart: (item: CartItem) => void;
   removeFromCart: (index: string) => void;
+  updateQuantity: (item: CartItem, quantity: number) => void;
+  increaseQuantity: (id: string, amount: number) => void;
+  decreaseQuantity: (id: string, amount: number) => void;
   clearCart: () => void;
   checkCart: () => void;
 };
@@ -29,14 +33,31 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const addToCart = (item: CartItem) => {
-    setCart((prev) => {
-      const updatedCart = [...prev, item];
-      sessionStorage.setItem("cart", JSON.stringify(updatedCart));
-      // console.log(updatedCart);
-      return updatedCart;
-    });
-  };
+ const addToCart = (item: CartItem) => {
+  setCart((prev) => {
+    const existingItem = prev.find(
+      (cartItem) => cartItem.id === item.id
+    );
+
+    let updatedCart;
+
+    if (existingItem) {
+      updatedCart = prev.map((cartItem) =>
+        cartItem.id === item.id
+          ? {
+              ...cartItem,
+              quantity: cartItem.quantity + 1,
+            }
+          : cartItem
+      );
+    } else {
+      updatedCart = [...prev, item];
+    }
+
+    sessionStorage.setItem("cart", JSON.stringify(updatedCart));
+    return updatedCart;
+  });
+};
 
   const removeFromCart = (id: string) => {
     setCart((prev) => {
@@ -46,21 +67,74 @@ export function CartProvider({ children }: { children: ReactNode }) {
     });
   };
 
+  const updateQuantity = (item: CartItem, quantity: number) => {
+  setCart((prev) => {
+    const existingItem = prev.find((cartItem) => cartItem.id === item.id);
+
+    let updatedCart;
+
+    if (quantity <= 0) {
+      updatedCart = prev.filter((cartItem) => cartItem.id !== item.id);
+    } else if (existingItem) {
+      updatedCart = prev.map((cartItem) =>
+        cartItem.id === item.id
+          ? { ...cartItem, quantity: quantity }
+          : cartItem
+      );
+    } else {
+      updatedCart = [...prev, { ...item, quantity: quantity }];
+    }
+
+    sessionStorage.setItem("cart", JSON.stringify(updatedCart));
+    return updatedCart;
+  });
+};
+
+const increaseQuantity = (id: string, amount: number) => {
+  setCart((prev) => {
+    const updatedCart = prev.map((item) =>
+      item.id === id
+        ? { ...item, quantity: item.quantity + amount }
+        : item
+    );
+
+    sessionStorage.setItem("cart", JSON.stringify(updatedCart));
+    return updatedCart;
+  });
+};
+
+const decreaseQuantity = (id: string, amount: number) => {
+  setCart((prev) => {
+    const updatedCart = prev
+      .map((item) =>
+        item.id === id
+          ? { ...item, quantity: item.quantity - amount }
+          : item
+      )
+      .filter((item) => item.quantity > 0);
+
+    sessionStorage.setItem("cart", JSON.stringify(updatedCart));
+    return updatedCart;
+  });
+};
+
   const checkCart = () => {
     console.log(cart);
   }
 
 
   const clearCart = () => {
-    setCart([]);
-    sessionStorage.setItem("cart", JSON.stringify([]));
-  };
+  setCart([]);
+  sessionStorage.setItem("cart", JSON.stringify([]));
+};
 
-  return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart, checkCart }}>
-      {children}
-    </CartContext.Provider>
-  );
+return (
+  <CartContext.Provider
+    value={{ cart, addToCart, removeFromCart, updateQuantity, increaseQuantity, decreaseQuantity, clearCart, checkCart }}
+  >
+    {children}
+  </CartContext.Provider>
+);
 }
 
 export function useCart() {

@@ -1,10 +1,14 @@
 .servicesContainer {
-  max-width: 700px;
-  margin: 0.75rem auto;
-  padding: 1rem;
-  background: #fff;
-  border: 1px solid rgba(198, 153, 134, 0.25);
-  border-radius: 12px;
+  width: 100%;
+  max-width: 760px;
+  margin: 0.6rem 0 1rem;
+  padding: 1rem 1.25rem;
+
+  background: #fffdfd;
+  border: 1px solid rgba(217, 140, 157, 0.18);
+  border-radius: 18px;
+
+  box-shadow: 0 4px 12px rgba(217, 140, 157, 0.05);
 }
 
 .textContent {
@@ -42,4 +46,85 @@
   margin: 1.5rem auto 0.75rem;
   color: rgb(198, 153, 134);
   font-size: 1.5rem;
+}
+
+.categoryButton {
+  position: relative;
+  width: 100%;
+  max-width: 760px;
+  margin: 0.85rem 0;
+  padding: 1rem 3rem 1rem 1.25rem;
+
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+
+  background: #fff7f8;
+  color: #6b3f2a;
+  border: 1px solid rgba(217, 140, 157, 0.35);
+  border-radius: 16px;
+
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+
+  box-shadow: 0 4px 12px rgba(217, 140, 157, 0.08);
+}
+
+.itemButton {
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.9rem 3rem 0.9rem 1rem;
+
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+
+  background: #fff7f8;
+  border: 1px solid rgba(217, 140, 157, 0.25);
+  border-radius: 14px;
+
+  color: #6b3f2a;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.dropdownIcon {
+  position: absolute;
+  top: 0.75rem;
+  right: 1rem;
+  color: #8b5a63;
+  font-size: 1rem;
+}
+
+.sizeButton {
+  background: #fff7f8;
+  color: #6b3f2a;
+  border: 1px solid rgba(217, 140, 157, 0.45);
+  border-radius: 12px;
+  padding: 0.7rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(217, 140, 157, 0.08);
+}
+
+.sizeButton:hover {
+  background: #f3d8de;
+}
+
+.sizeButtonActive {
+  background: #f2c8d1;
+  color: #6b3f2a;
+  border: 1px solid #d98c9d;
+}
+
+.addBtn {
+  background: #d98c9d;
+  color: white;
+  border: 1px solid #d98c9d;
+  border-radius: 12px;
+  padding: 0.7rem 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(217, 140, 157, 0.14);
 }
