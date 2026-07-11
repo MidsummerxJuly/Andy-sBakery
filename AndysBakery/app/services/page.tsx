@@ -6,7 +6,7 @@ import lashlift2 from "../images/lashlift2.jpeg"
 import fullSet1 from "../images/fullSet1.jpeg"
 import pageCSS from "./page.module.css"
 import servicesCSS from "./services.module.css"
-import { BiMinusCircle, BiPlusCircle } from "react-icons/bi";
+import { BiMinusCircle, BiPlusCircle, BiChevronLeft, BiChevronRight } from "react-icons/bi";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
@@ -98,13 +98,28 @@ const services = [
       {
         id: "custom-cake",
         name: "Custom Cake Order",
-        price: 35,
+        price:50,
         duration: 0,
         description: "Custom pricing depends on size, flavor, and design.",
         sizes: [
-            { size: "Basic", price: 50 },
-            { size: "Detailed", price: 100 },
-            { size: "Premium", price: 200 },
+          {
+            size: "Basic",
+            displaySize: '10" Cake',
+            price: 50,
+            serves: "18–24",
+          },
+          {
+            size: "Detailed",
+            displaySize: '12" Cake',
+            price: 100,
+            serves: "25–35",
+          },
+          {
+            size: "Premium",
+            displaySize: '14" Cake',
+            price: 200,
+            serves: "35–50",
+          },
         ],
       },
     ],
@@ -133,11 +148,16 @@ export default function Services() {
   const { clearCart } = useCart();
   const { checkCart } = useCart();
   const [selectedSizes, setSelectedSizes] = useState<{
-    [key: string]: { size: string; price: number; serves?: string };
-  }>({});
+  [key: string]: {
+    size: string;
+    price: number;
+    serves?: string;
+    displaySize?: string;
+  };
+}>({});
 
+const [customOptionPage, setCustomOptionPage] = useState<{ [key: string]: number }>({});
   const exists = cart.length > 0;
-  const [customStep, setCustomStep] = useState<{ [key: string]: number }>({});
 
   const totalPrice = cart.reduce(
     (total, service) => total + service.price * service.quantity,
@@ -148,6 +168,28 @@ export default function Services() {
     0
   );
 
+  const customOptionPages = [
+  {
+    title: "Flavor",
+    label: "Choose a flavor",
+    options: ["Chocolate", "Vanilla", "Strawberry", "Red Velvet"],
+  },
+  {
+    title: "Filling",
+    label: "Choose a filling",
+    options: ["None", "Chocolate Ganache", "Vanilla Cream", "Fruit Filling"],
+  },
+  {
+    title: "Frosting",
+    label: "Choose frosting",
+    options: ["Buttercream", "Chocolate Buttercream", "Vanilla Buttercream", "Cream Cheese"],
+  },
+  {
+    title: "Add-ons",
+    label: "Choose add-ons",
+    options: ["None", "Writing", "Flowers", "Extra Decoration"],
+  },
+];
 
   return (
     <div className="body-wrap boxed-container">
@@ -219,7 +261,7 @@ export default function Services() {
           </div>
         </header>
         
-        <div className={pageCSS.appointmentPage}>
+         <div className={pageCSS.appointmentPage}>
           <div className={servicesCSS.servicesPage}>
 
             {services.map((category) => (
@@ -233,13 +275,20 @@ export default function Services() {
                   <span>{category.category}</span>
 
                   <span className={servicesCSS.dropdownIcon}>
-                    {openCategory === category.category ? "⌃" : "⌄"}
+                    {openCategory === category.category ? "▴" : "▾"}
                   </span>
                 </button>
               {openCategory === category.category && (
                 <>
                 {category.items.map((item) => {
                   const exists = cart.some((cartItem) => cartItem.id === item.id);
+                  const currentSize = selectedSizes[item.id] || item.sizes[0];
+                  const currentCustomPage = customOptionPage[item.id] ?? 0;
+                  const safeCustomPage = Math.min(
+                    Math.max(currentCustomPage, 0),
+                    customOptionPages.length - 1
+                  );
+                  const customPage = customOptionPages[safeCustomPage];
 
                   return (
                     <div key={item.id} className={servicesCSS.servicesContainer}>
@@ -249,16 +298,22 @@ export default function Services() {
                             onClick={() =>
                               setOpenItem(openItem === item.id ? null : item.id)
                             }
-                            className={servicesCSS.itemButton}
+                            className={servicesCSS.itemDropdownBtn}
                           >
                             <span>{item.name}</span>
 
-                            <span className={servicesCSS.dropdownIcon}>
-                              {openItem === item.id ? "⌃" : "⌄"}
+                            <span className={servicesCSS.itemArrow}>
+                              {openItem === item.id ? "▴" : "▾"}
                             </span>
                           </button>
-                          {openItem === item.id && (
-                            <div style={{ padding: "10px 0" }}>
+
+                        {openItem === item.id && (
+                          <div className={servicesCSS.productCardGrid}>
+                            <div className={servicesCSS.productImagePlaceholder}>
+                              🧁
+                            </div>
+
+                            <div className={servicesCSS.productDetails}>
                               <p>{item.description}</p>
 
                               <p style={{ fontWeight: "bold" }}>
@@ -266,13 +321,20 @@ export default function Services() {
                               </p>
 
                               <div style={{ marginTop: "1rem" }}>
-                                <p style={{ fontWeight: "bold" }}>Size:</p>
+                               {item.id === "custom-cake" && selectedSizes[item.id] ? (
+                                  <p style={{ fontWeight: "bold" }}>
+                                    Size: {selectedSizes[item.id].displaySize} • Serves{" "}
+                                    {selectedSizes[item.id].serves || "varies"}
+                                  </p>
+                                ) : (
+                                  <p style={{ fontWeight: "bold" }}>Size:</p>
+                                )}
 
                                 <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
                                   {item.sizes.map((size) => (
                                     <button
                                       className={
-                                        selectedSizes[item.id]?.size === size.size
+                                        currentSize?.size === size.size
                                           ? `${servicesCSS.sizeButton} ${servicesCSS.sizeButtonActive}`
                                           : servicesCSS.sizeButton
                                       }
@@ -288,141 +350,146 @@ export default function Services() {
                                     </button>
                                   ))}
                                 </div>
-                                {selectedSizes[item.id] && (
-                                  <p style={{ marginTop: "0.75rem", fontWeight: "bold" }}>
-                                    Serves {selectedSizes[item.id].serves || "varies"} • $
-                                    {selectedSizes[item.id].price}
-                                  </p>
-                                )}
-                              </div>
-                            </div>
-                          )}
 
-                          {item.id === "custom-cake" && (
-                            <div style={{ marginTop: "1rem" }}>
-                              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                                <button
-                                  onClick={() =>
-                                    setCustomStep({
-                                      ...customStep,
-                                      [item.id]: Math.max((customStep[item.id] || 0) - 1, 0),
-                                    })
-                                  }
-                                >
-                                  {"<"}
-                                </button>
-
-                                <p style={{ fontWeight: "bold" }}>
-                                  {["Size", "Frosting / Filling / Flavor", "Decorations / Add-ons / Notes"][customStep[item.id] || 0]}
+                              {currentSize && (
+                                <p className={servicesCSS.sizeSummary}>
+                                  {item.id === "custom-cake" ? (
+                                    <>Starting price: ${currentSize.price}</>
+                                  ) : (
+                                    <>
+                                      Serves {currentSize.serves || "varies"} • ${currentSize.price}
+                                    </>
+                                  )}
                                 </p>
-
-                                <button
-                                  onClick={() =>
-                                    setCustomStep({
-                                      ...customStep,
-                                      [item.id]: Math.min((customStep[item.id] || 0) + 1, 2),
-                                    })
-                                  }
-                                >
-                                  {">"}
-                                </button>
-                              </div>
+                              )}
                               {item.id === "custom-cake" && (
-                                <div style={{ marginTop: "1rem" }}>
-                                  {(customStep[item.id] || 0) === 0 && (
-                                    <p>Choose your cake size above.</p>
-                                  )}
+                                <div className={servicesCSS.customPager}>
+                                  <div className={servicesCSS.customPagerHeader}>
+                                    {safeCustomPage > 0 ? (
+                                      <button
+                                        type="button"
+                                        className={servicesCSS.customArrowButton}
+                                        onClick={() =>
+                                          setCustomOptionPage({
+                                            ...customOptionPage,
+                                            [item.id]: safeCustomPage - 1,
+                                          })
+                                        }
+                                      >
+                                        <BiChevronLeft className={servicesCSS.customArrowIcon} />
+                                      </button>
+                                    ) : (
+                                      <span className={servicesCSS.customArrowSpacer}></span>
+                                    )}
 
-                                  {(customStep[item.id] || 0) === 1 && (
-                                    <div>
-                                      <p>Frosting / Filling / Flavor options coming soon.</p>
-                                    </div>
-                                  )}
+                                    <p className={servicesCSS.customPagerTitle}>{customPage.title}</p>
 
-                                  {(customStep[item.id] || 0) === 2 && (
-                                    <div>
-                                      <p>Decorations, add-ons, and notes coming soon.</p>
-                                    </div>
-                                  )}
+                                    {safeCustomPage < customOptionPages.length - 1 ? (
+                                      <button
+                                        type="button"
+                                        className={servicesCSS.customArrowButton}
+                                        onClick={() =>
+                                          setCustomOptionPage({
+                                            ...customOptionPage,
+                                            [item.id]: safeCustomPage + 1,
+                                          })
+                                        }
+                                      >
+                                        <BiChevronRight className={servicesCSS.customArrowIcon} />
+                                      </button>
+                                    ) : (
+                                      <span className={servicesCSS.customArrowSpacer}></span>
+                                    )}
+                                  </div>
+
+                                  <div className={servicesCSS.customOptionCard}>
+                                    <label className={servicesCSS.optionLabel}>{customPage.label}</label>
+
+                                    <select className={servicesCSS.optionSelect}>
+                                      {customPage.options.map((option) => (
+                                        <option key={option}>{option}</option>
+                                      ))}
+                                    </select>
+                                  </div>
                                 </div>
                               )}
+                              </div>
                             </div>
-                          )}
+                          </div>
+                        )}
 
-                          <p className={servicesCSS.heroParagraphServices}>
-                            {item.description}
-                          </p>
+                          
                         </div>
+                     {openItem === item.id && (
+                      <div className={servicesCSS.orderActionRow}>
+                        <div className={servicesCSS.quantityControl}>
+                          <button
+                            type="button"
+                            className={servicesCSS.qtyButton}
+                            onClick={() => {
+                              const currentQty = Number(quantityInputs[item.id] || 1);
 
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            gap: "0.5rem",
-                          }}
-                        >
+                              setQuantityInputs({
+                                ...quantityInputs,
+                                [item.id]: String(Math.max(currentQty - 1, 0)),
+                              });
+                            }}
+                          >
+                            -
+                          </button>
+
                           <input
                             type="number"
                             min="0"
-                            value={
-                              quantityInputs[item.id] ??
-                              String(cart.find((cartItem) => cartItem.id === item.id)?.quantity ?? "")
-                            }
+                            value={quantityInputs[item.id] ?? "1"}
                             onChange={(e) =>
                               setQuantityInputs({
                                 ...quantityInputs,
                                 [item.id]: e.target.value,
                               })
                             }
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") {
-                                const quantity = Number(quantityInputs[item.id] || 0);
-
-                                updateQuantity(
-                                  {
-                                    id: item.id,
-                                    name: selectedSizes[item.id]
-                                      ? `${item.name} - ${selectedSizes[item.id].size}`
-                                      : item.name,
-                                    price: selectedSizes[item.id]?.price || item.price || item.price || 0,
-                                    duration: item.duration || 0,
-                                    quantity: 1,
-                                  },
-                                  quantity
-                                );
-
-                                setQuantityInputs({
-                                  ...quantityInputs,
-                                  [item.id]: "",
-                                });
-                              }
-                            }}
-                            className={pageCSS.basketMiniInput}
+                            className={servicesCSS.qtyInput}
                           />
 
-                          <div
+                          <button
+                            type="button"
+                            className={servicesCSS.qtyButton}
                             onClick={() => {
-                              const quantity = Number(quantityInputs[item.id] || 0);
+                              const currentQty = Number(quantityInputs[item.id] || 1);
 
-                              updateQuantity(
-                                {
-                                  id: item.id,
-                                  name: selectedSizes[item.id]
-                                    ? `${item.name} - ${selectedSizes[item.id].size}`
-                                    : item.name,
-                                  price: selectedSizes[item.id]?.price || item.price || item.price || 0,
-                                  duration: item.duration || 0,
-                                  quantity: 1,
-                                },
-                                quantity
-                              )
+                              setQuantityInputs({
+                                ...quantityInputs,
+                                [item.id]: String(currentQty + 1),
+                              });
                             }}
-                            className={servicesCSS.addBtn}
                           >
-                            Add to Basket
-                          </div>
+                            +
+                          </button>
                         </div>
+
+                        <div
+                          onClick={() => {
+                            const quantity = Number(quantityInputs[item.id] || 1);
+
+                            updateQuantity(
+                              {
+                                id: item.id,
+                                name: currentSize
+                                  ? `${item.name} - ${currentSize.size}`
+                                  : item.name,
+                                price: currentSize?.price ?? item.price ?? 0,
+                                duration: item.duration || 0,
+                                quantity: 1,
+                              },
+                              quantity > 0 ? quantity : 1
+                            );
+                          }}
+                          className={servicesCSS.orderAddButton}
+                        >
+                          Add to Basket
+                        </div>
+                      </div>
+                    )}
                       </div>
                     </div>
                   );

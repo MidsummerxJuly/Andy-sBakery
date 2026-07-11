@@ -715,3 +715,14 @@
   font-size: 0.85rem;
   color: #6b3f2a;
 }
+
+.basketMiniInput::-webkit-outer-spin-button,
+.basketMiniInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.basketMiniInput {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}

@@ -128,3 +128,420 @@
   cursor: pointer;
   box-shadow: 0 3px 8px rgba(217, 140, 157, 0.14);
 }
+
+.categoryDropdownBtn,
+.itemDropdownBtn {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+  background: transparent;
+  border: none;
+  color: #3c2a1e;
+  cursor: pointer;
+}
+
+.categoryDropdownBtn {
+  max-width: 900px;
+  margin: 1rem auto;
+  padding: 1.5rem;
+  border: 1px solid rgba(198, 153, 134, 0.45);
+  border-radius: 12px;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.itemDropdownBtn {
+  padding: 0.75rem 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.itemDropdownBtn {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+  background: transparent;
+  border: 1px solid rgba(198, 153, 134, 0.35);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  color: #3c2a1e;
+  cursor: pointer;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.dropdownIcon {
+  min-width: 44px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.itemDropdownBtn {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+  background: transparent;
+  border: 1px solid rgba(198, 153, 134, 0.35);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  color: #3c2a1e;
+  cursor: pointer;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.itemArrow {
+  margin-left: auto;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #3c2a1e;
+}
+
+.dropdownIcon,
+.itemArrow {
+  min-width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(236, 121, 148, 0.15);
+  color: #d85f7f;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin-left: 1rem;
+  box-shadow: 0 2px 6px rgba(216, 95, 127, 0.12);
+}
+
+.categoryButton {
+  width: 100%;
+  margin: 1rem 0;
+  padding: 1.5rem 2rem;
+  border: 1px solid rgba(198, 153, 134, 0.45);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.45);
+  color: #3c2a1e;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+  cursor: pointer;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.productCardGrid {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 2rem;
+  align-items: start;
+  width: 100%;
+}
+
+.productImagePlaceholder {
+  width: 100%;
+  min-height: 300px;
+  border-radius: 14px;
+  border: 1px solid rgba(198, 153, 134, 0.35);
+  background: rgba(255, 240, 237, 0.65);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #b96b7d;
+  font-size: 3rem;
+}
+
+.productDetails {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .productCardGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .productImagePlaceholder {
+    min-height: 220px;
+  }
+}
+
+.productDetails {
+  width: 100%;
+  padding-top: 1.25rem;
+}
+
+.sizeButton {
+  min-width: 115px;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid rgba(198, 153, 134, 0.5);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.55);
+  color: #3c2a1e;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.sizeButton:hover {
+  border-color: #e56f93;
+  background: rgba(255, 236, 240, 0.75);
+}
+
+.sizeButtonActive {
+  border-color: #e56f93;
+  background: rgba(255, 221, 229, 0.9);
+  color: #3c2a1e;
+  box-shadow: 0 4px 12px rgba(229, 111, 147, 0.18);
+}
+
+.optionGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(198, 153, 134, 0.35);
+}
+
+.optionGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.optionLabel {
+  font-weight: 700;
+  color: #3c2a1e;
+}
+
+.optionSelect {
+  width: 100%;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid rgba(198, 153, 134, 0.5);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.65);
+  color: #3c2a1e;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .optionGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.orderActionRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.25rem;
+  margin-left: calc(260px + 2rem);
+  width: calc(100% - 260px - 2rem);
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .orderActionRow {
+    margin-left: 0;
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+
+.quantityControl {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.qtyButton {
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(198, 153, 134, 0.5);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.65);
+  color: #3c2a1e;
+  font-size: 1.4rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.qtyButton:hover {
+  border-color: #e56f93;
+  background: rgba(255, 236, 240, 0.75);
+}
+
+.qtyInput {
+  width: 55px;
+  height: 42px;
+  border: 1px solid rgba(198, 153, 134, 0.5);
+  border-radius: 9px;
+  text-align: center;
+  color: #3c2a1e;
+  font-weight: 700;
+}
+
+.orderAddButton {
+  min-width: 160px;
+  height: 44px;
+  border-radius: 10px;
+  background: #df7f98;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.sizeSummary {
+  margin-top: 0.75rem;
+  font-weight: 700;
+  color: #3c2a1e;
+}
+
+.orderActionRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.quantityControl {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.qtyButton {
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(198, 153, 134, 0.5);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.65);
+  color: #3c2a1e;
+  font-size: 1.4rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.qtyButton:hover {
+  border-color: #e56f93;
+  background: rgba(255, 236, 240, 0.75);
+}
+
+.qtyInput {
+  width: 55px;
+  height: 42px;
+  border: 1px solid rgba(198, 153, 134, 0.5);
+  border-radius: 9px;
+  text-align: center;
+  color: #3c2a1e;
+  font-weight: 700;
+}
+
+.orderAddButton {
+  min-width: 160px;
+  height: 44px;
+  border-radius: 10px;
+  background: #df7f98;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.qtyInput::-webkit-outer-spin-button,
+.qtyInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.qtyInput {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.customPager {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(198, 153, 134, 0.35);
+}
+
+.customPagerHeader {
+  display: grid;
+  grid-template-columns: 32px 1fr 32px;
+  align-items: center;
+  gap: 0.75rem;
+  max-width: 420px;
+  margin: 0 auto 1rem auto;
+}
+
+.customPagerTitle {
+  text-align: center;
+  font-weight: 800;
+  color: #3c2a1e;
+  margin: 0;
+}
+
+.customArrowButton {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid rgba(198, 153, 134, 0.5);
+  background: rgba(255, 255, 255, 0.65);
+  color: #3c2a1e;
+  font-size: 1.35rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.customArrowButton:hover {
+  border-color: #e56f93;
+  background: rgba(255, 236, 240, 0.75);
+}
+
+.customArrowSpacer {
+  width: 32px;
+  height: 32px;
+}
+
+.customOptionCard {
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.customArrowButton {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid rgba(198, 153, 134, 0.5);
+  background: rgba(255, 245, 247, 0.85);
+  color: #3c2a1e;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.customArrowIcon {
+  font-size: 1.4rem;
+  display: block;
+}

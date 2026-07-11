@@ -68,11 +68,11 @@ export default function BottomSheetNav() {
                 <div className="sheetContent">
                     <h3 className="sheetTitle"></h3>
                     <nav className="sheetNav">
-                        <Link className="sheetItem" href="/ ">Home</Link>
-                        <Link className="sheetItem" href="/services">Services</Link>
+                        <Link className="sheetItem" href="/">Home</Link>
+                        <Link className="sheetItem" href="/services">Order</Link>
                         <Link className="sheetItem" href="/policies">Policies</Link>
                         {/* <Link className="sheetItem" href="/about">About</Link> */}
-                        {/* <Link className="sheetItem" href="/contact`">Contact </Link> */}
+                        {/* <Link className="sheetItem" href="/contact">Contact</Link> */}
                     </nav>
                 </div>
             </div>

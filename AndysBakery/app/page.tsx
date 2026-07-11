@@ -39,12 +39,11 @@ export default function Home() {
 				<main>
 					<section className="hero text-center text-light">
 						<div className="hero-copy">
-							<h1 className="hero-title mt-0 brand" style={{ paddingBottom: "1rem" }}> LuxxBeeBeauty</h1>
-							{/* <h1 className="hero-title mt-0 brand"> Testing</h1> */}
-							<p className="hero-paragraph"> where the confidence begins</p>
-							<div className="hero-cta">
-								<Link className="button button-primary button-wide-mobile" href="/services">BOOK APPOINTMENT NOW</Link>
-							</div>
+						<h1 className="hero-title mt-0 brand" style={{ paddingBottom: "1rem" }}>Andy's Bakery</h1>
+					<p className="hero-paragraph">Fresh baked sweets, custom cakes, and homemade treats.</p>
+					<div className="hero-cta">
+						<Link className="button button-primary button-wide-mobile" href="/services">START AN ORDER</Link>
+					</div>
 						</div>
 					</section>
 

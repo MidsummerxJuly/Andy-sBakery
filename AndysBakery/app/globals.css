@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Quicksand:wght@500;600;700&display=swap');
+
 html {
   line-height: 1.15;
   -ms-text-size-adjust: 100%;
@@ -2330,4 +2332,17 @@ img {
         box-shadow: 0 6px 20px rgb(93 93 93 / 23%);
     }
 
+}
+
+body {
+  font-family: "Nunito", sans-serif;
+}
+
+h1,
+h2,
+h3,
+button,
+.sheetItem,
+.sheetTitle {
+  font-family: "Quicksand", sans-serif;
 }
