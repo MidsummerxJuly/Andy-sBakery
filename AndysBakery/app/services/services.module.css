@@ -1,10 +1,14 @@
 .servicesContainer {
-  max-width: 700px;
-  margin: 0.75rem auto;
-  padding: 1rem;
-  background: #fff;
-  border: 1px solid rgba(198, 153, 134, 0.25);
-  border-radius: 12px;
+  width: 100%;
+  max-width: 760px;
+  margin: 0.6rem 0 1rem;
+  padding: 1rem 1.25rem;
+
+  background: #fffdfd;
+  border: 1px solid rgba(217, 140, 157, 0.18);
+  border-radius: 18px;
+
+  box-shadow: 0 4px 12px rgba(217, 140, 157, 0.05);
 }
 
 .textContent {
@@ -37,9 +41,683 @@
   border: 1px solid rgb(198, 153, 134);
 }
 
+.servicesPage {
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
 .servicesPage h2 {
   max-width: 700px;
   margin: 1.5rem auto 0.75rem;
   color: rgb(198, 153, 134);
   font-size: 1.5rem;
+}
+
+.categoryButton {
+  position: relative;
+  width: 100%;
+  max-width: 760px;
+  margin: 0.85rem auto;
+  padding: 1rem 3rem 1rem 1.25rem;
+
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+
+  background: #fff7f8;
+  color: #6b3f2a;
+  border: 1px solid rgba(217, 140, 157, 0.35);
+  border-radius: 16px;
+
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+
+  box-shadow: 0 4px 12px rgba(217, 140, 157, 0.08);
+}
+
+.itemButton {
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.9rem 3rem 0.9rem 1rem;
+
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+
+  background: #fff7f8;
+  border: 1px solid rgba(217, 140, 157, 0.25);
+  border-radius: 14px;
+
+  color: #6b3f2a;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.dropdownIcon {
+  position: absolute;
+  top: 0.75rem;
+  right: 1rem;
+  color: #8b5a63;
+  font-size: 1rem;
+}
+
+.sizeButton {
+  background: #fff7f8;
+  color: #6b3f2a;
+  border: 1px solid rgba(217, 140, 157, 0.45);
+  border-radius: 12px;
+  padding: 0.7rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(217, 140, 157, 0.08);
+}
+
+.sizeButton:hover {
+  background: #f3d8de;
+}
+
+.sizeButtonActive {
+  background: #f2c8d1;
+  color: #6b3f2a;
+  border: 1px solid #d98c9d;
+}
+
+.addBtn {
+  background: #d98c9d;
+  color: white;
+  border: 1px solid #d98c9d;
+  border-radius: 12px;
+  padding: 0.7rem 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(217, 140, 157, 0.14);
+}
+
+.categoryDropdownBtn,
+.itemDropdownBtn {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+  background: transparent;
+  border: none;
+  color: #3c2a1e;
+  cursor: pointer;
+}
+
+.categoryDropdownBtn {
+  max-width: 900px;
+  margin: 1rem auto;
+  padding: 1.5rem;
+  border: 1px solid rgba(198, 153, 134, 0.45);
+  border-radius: 12px;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.itemDropdownBtn {
+  padding: 0.75rem 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.itemDropdownBtn {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+  background: transparent;
+  border: 1px solid rgba(198, 153, 134, 0.35);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  color: #3c2a1e;
+  cursor: pointer;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.dropdownIcon {
+  min-width: 44px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.itemDropdownBtn {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+  background: transparent;
+  border: 1px solid rgba(198, 153, 134, 0.35);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  color: #3c2a1e;
+  cursor: pointer;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.itemArrow {
+  margin-left: auto;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #3c2a1e;
+}
+
+.dropdownIcon,
+.itemArrow {
+  min-width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(236, 121, 148, 0.15);
+  color: #d85f7f;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin-left: 1rem;
+  box-shadow: 0 2px 6px rgba(216, 95, 127, 0.12);
+}
+
+.categoryButton {
+  width: 100%;
+  margin: 1rem 0;
+  padding: 1.5rem 2rem;
+  border: 1px solid rgba(198, 153, 134, 0.45);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.45);
+  color: #3c2a1e;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+  cursor: pointer;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.productCardGrid {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 2rem;
+  align-items: start;
+  width: 100%;
+}
+
+.productImagePlaceholder {
+  width: 100%;
+  min-height: 300px;
+  border-radius: 14px;
+  border: 1px solid rgba(198, 153, 134, 0.35);
+  background: rgba(255, 240, 237, 0.65);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #b96b7d;
+  font-size: 3rem;
+}
+
+.productDetails {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .productCardGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .productImagePlaceholder {
+    min-height: 220px;
+  }
+}
+
+.productDetails {
+  width: 100%;
+  padding-top: 1.25rem;
+}
+
+.sizeButton {
+  min-width: 115px;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid rgba(198, 153, 134, 0.5);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.55);
+  color: #3c2a1e;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.sizeButton:hover {
+  border-color: #e56f93;
+  background: rgba(255, 236, 240, 0.75);
+}
+
+.sizeButtonActive {
+  border-color: #e56f93;
+  background: rgba(255, 221, 229, 0.9);
+  color: #3c2a1e;
+  box-shadow: 0 4px 12px rgba(229, 111, 147, 0.18);
+}
+
+.optionGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(198, 153, 134, 0.35);
+}
+
+.optionGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.optionLabel {
+  font-weight: 700;
+  color: #3c2a1e;
+}
+
+.optionSelect {
+  width: 100%;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid rgba(198, 153, 134, 0.5);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.65);
+  color: #3c2a1e;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .optionGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.orderActionRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.25rem;
+  margin-left: calc(260px + 2rem);
+  width: calc(100% - 260px - 2rem);
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .orderActionRow {
+    margin-left: 0;
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+
+.quantityControl {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.qtyButton {
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(198, 153, 134, 0.5);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.65);
+  color: #3c2a1e;
+  font-size: 1.4rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.qtyButton:hover {
+  border-color: #e56f93;
+  background: rgba(255, 236, 240, 0.75);
+}
+
+.qtyInput {
+  width: 55px;
+  height: 42px;
+  border: 1px solid rgba(198, 153, 134, 0.5);
+  border-radius: 9px;
+  text-align: center;
+  color: #3c2a1e;
+  font-weight: 700;
+}
+
+.orderAddButton {
+  min-width: 160px;
+  height: 44px;
+  border-radius: 10px;
+  background: #df7f98;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.sizeSummary {
+  margin-top: 0.75rem;
+  font-weight: 700;
+  color: #3c2a1e;
+}
+
+.orderActionRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.quantityControl {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.qtyButton {
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(198, 153, 134, 0.5);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.65);
+  color: #3c2a1e;
+  font-size: 1.4rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.qtyButton:hover {
+  border-color: #e56f93;
+  background: rgba(255, 236, 240, 0.75);
+}
+
+.qtyInput {
+  width: 55px;
+  height: 42px;
+  border: 1px solid rgba(198, 153, 134, 0.5);
+  border-radius: 9px;
+  text-align: center;
+  color: #3c2a1e;
+  font-weight: 700;
+}
+
+.orderAddButton {
+  min-width: 160px;
+  height: 44px;
+  border-radius: 10px;
+  background: #df7f98;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.qtyInput::-webkit-outer-spin-button,
+.qtyInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.qtyInput {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.customPager {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(198, 153, 134, 0.35);
+}
+
+.customPagerHeader {
+  display: grid;
+  grid-template-columns: 32px 1fr 32px;
+  align-items: center;
+  gap: 0.75rem;
+  max-width: 420px;
+  margin: 0 auto 1rem auto;
+}
+
+.customPagerTitle {
+  text-align: center;
+  font-weight: 800;
+  color: #3c2a1e;
+  margin: 0;
+}
+
+.customArrowButton {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid rgba(198, 153, 134, 0.5);
+  background: rgba(255, 255, 255, 0.65);
+  color: #3c2a1e;
+  font-size: 1.35rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.customArrowButton:hover {
+  border-color: #e56f93;
+  background: rgba(255, 236, 240, 0.75);
+}
+
+.customArrowSpacer {
+  width: 32px;
+  height: 32px;
+}
+
+.customOptionCard {
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.customArrowButton {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid rgba(198, 153, 134, 0.5);
+  background: rgba(255, 245, 247, 0.85);
+  color: #3c2a1e;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.customArrowIcon {
+  font-size: 1.4rem;
+  display: block;
+}
+
+
+.sizeButtonGroup {
+  width: 100%;
+  max-width: 430px;
+  margin: 0.5rem 0 0.75rem;
+
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.sizeButton {
+  width: 100%;
+  min-width: 0;
+  height: 44px;
+  padding: 0 0.75rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.productDetails {
+  width: 100%;
+  padding-top: 0;
+}
+
+.sizeSummary {
+  max-width: 430px;
+  margin: 0.85rem 0 0.65rem;
+  text-align: center;
+  font-weight: 800;
+}
+
+.customPager {
+  width: 100%;
+  max-width: 430px;
+  margin: 0.75rem 0 0;
+  padding-top: 0.8rem;
+  border-top: 1px solid rgba(198, 153, 134, 0.3);
+}
+
+.customPagerHeader {
+  display: grid;
+  grid-template-columns: 36px 1fr 36px;
+  align-items: center;
+  gap: 0.5rem;
+
+  width: 100%;
+  margin: 0 0 0.65rem;
+}
+
+.customOptionCard {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+.optionLabel {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-weight: 800;
+}
+
+.optionSelect {
+  width: 100%;
+  height: 46px;
+  padding: 0 0.85rem;
+  font-size: 0.95rem;
+}
+
+.orderActionRow {
+  width: calc(100% - 240px - 2rem);
+  margin: 1rem 0 0 calc(240px + 2rem);
+  padding-top: 0.9rem;
+  border-top: 1px solid rgba(198, 153, 134, 0.25);
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  flex-wrap: nowrap;
+}
+
+.quantityControl {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  height: 44px;
+}
+
+.qtyButton,
+.qtyInput,
+.orderAddButton {
+  height: 42px;
+}
+
+.qtyButton {
+  width: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  line-height: 1;
+}
+
+.qtyInput {
+  width: 52px;
+  padding: 0;
+  line-height: 42px;
+}
+
+.orderAddButton {
+  min-width: 150px;
+  padding: 0 1rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quantityControl {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  height: 44px;
+}
+
+.qtyButton,
+.qtyInput {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  margin: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+  line-height: 1;
+
+  border: 1px solid rgba(198, 153, 134, 0.5);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.65);
+
+  color: #3c2a1e;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.qtyInput {
+  text-align: center;
+}
+
+.orderActionRow {
+  align-items: center;
 }

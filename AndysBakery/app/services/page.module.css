@@ -1,10 +1,5 @@
 
 
-.appointmentPage {
-    padding-left: 5rem;
-    margin-bottom: 5rem;
-}
-
 .servicesPage {
     /* padding: 2rem; */
     font-size: 30px;
@@ -13,7 +8,7 @@
     display: flex;
     /* justify-content: right; */
     align-items: center;
-    padding-top: 30px;
+    padding-top: 0;
     /* padding-bottom: 30px; */
 }
 
@@ -216,8 +211,14 @@
         padding-left: 1rem;
         padding-right: 1rem;
         margin-bottom: 5rem;
+
+        position: relative;
+        overflow: hidden;
+        isolation: isolate;
+        
     }
 }
+
 
 
 .buttonGroup {
@@ -351,19 +352,29 @@
 }
 
 .cartContainer {
-  max-width: 750px;
+  max-width: 820px;
   margin: 2rem auto;
   padding: 1.5rem;
-  background: #fff;
-  border-radius: 12px;
-  border: 1px solid #eee;
+  background: #fffdfd;
+  border-radius: 20px;
+  border: 1px solid rgba(217,140,157,.18);
+  box-shadow: 0 4px 12px rgba(217,140,157,.06);
 }
 
 .cartTitle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+
+  white-space: nowrap;
   text-align: center;
-  color: var(--accent);
-  font-size: 1.8rem;
-  margin-bottom: 1rem;
+  color: #6b3f2a;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+
+  margin-bottom: 1.5rem;
 }
 
 .cartTable {
@@ -405,10 +416,20 @@
 
 .cartSummary {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  align-items: center;
+
   font-weight: 600;
-  margin: 1rem 0;
+  margin: 1.5rem 0;
   color: #111;
+}
+
+.cartSummary h3 {
+  white-space: nowrap;
+  color: #6b3f2a;
+  font-size: 3rem;
+  line-height: 1;
+  margin: 0;
 }
 
 .checkoutButton {
@@ -420,4 +441,430 @@
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
+}
+
+.quantityControl {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.quantityInput {
+  width: 52px;
+  height: 40px;
+  text-align: center;
+  border: 1px solid rgba(217,140,157,.45);
+  border-radius: 10px;
+  background: #fffdfd;
+  color: #6b3f2a;
+  font-weight: 600;
+}
+
+.quantityInput::-webkit-outer-spin-button,
+.quantityInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.quantityInput[type="number"] {
+  appearance: textfield;
+}
+
+.addButton {
+  color: #4f8f58;
+  cursor: pointer;
+  font-size: 1.25rem;
+}
+
+.removeButton {
+  color: #c96f7d;
+  cursor: pointer;
+  font-size: 1.25rem;
+}
+
+.basketActionGroup {
+  display: grid;
+  grid-template-columns: 58px 28px 28px 58px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 44px;
+}
+
+.bakeryHeader {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  align-items: center;
+
+  background: #fff7f8;
+
+  padding: 1rem 3rem 3.75rem;
+  margin-bottom: 0;
+
+  position: relative;
+  overflow: hidden;
+  border-bottom: none;
+}
+
+.headerWave {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height:25px;
+  overflow: hidden;
+  line-height: 0;
+  z-index: 2;
+}
+
+.headerWave svg {
+  display: block;
+  width: 100%;
+  height: 24px;
+}
+
+.waveFill {
+  fill: #fff0e7;
+  stroke: none;
+}
+
+.waveLine {
+  fill: none;
+  stroke: rgba(217, 140, 157, 0.55);
+  stroke-width: 3.2;
+}
+
+
+.bakeryLogo {
+  width: 285px;
+  height: auto;
+  filter: drop-shadow(0 6px 12px rgba(107, 63, 42, 0.12));
+  mix-blend-mode: normal;
+}
+
+.logoArea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 520px;
+}
+
+.contactRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  margin-top: 0.75rem;
+  font-size: 1.05rem;
+  color: #6b3f2a;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+
+.checkoutButton {
+  width: 100%;
+  padding: .9rem 1rem;
+  background: #f3d8de;
+  border: 1px solid rgba(217,140,157,.45);
+  border-radius: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 3px 10px rgba(217,140,157,.10);
+  transition: .2s ease;
+}
+
+.checkoutButton:hover {
+  background: #eec8d2;
+}
+
+.basketMiniInput {
+  width: 52px;
+  height: 34px;
+  text-align: center;
+  border: 1px solid rgba(217, 140, 157, 0.45);
+  border-radius: 9px;
+  background: #fffdfd;
+  color: #6b3f2a;
+  font-weight: 600;
+}
+
+.hiddenBasketInput {
+  visibility: hidden;
+}
+
+.flowerBanner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  max-height: 325px;
+  height: auto;
+  opacity: 0.38;
+  pointer-events: none;
+  z-index: 0;
+  filter: saturate(1.45) contrast(1.06);
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 75%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 0%, black 75%, transparent 100%);
+}
+
+.menuButton,
+.logoArea,
+.qrBox {
+  position: relative;
+  z-index: 3;
+}
+
+.qrBox {
+  justify-self: end;
+  color: #6b3f2a;
+  font-weight: 600;
+  position: relative;
+  z-index: 3;
+  transform: translateY(45px);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.qrPlaceholder {
+  width: 90px;
+  height: 90px;
+  background: #fffdfd;
+  border: 1px solid rgba(217, 140, 157, 0.45);
+  border-radius: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #6b3f2a;
+  font-weight: 700;
+  font-size: 0.95rem;
+
+  box-shadow: 0 3px 10px rgba(217, 140, 157, 0.12);
+}
+
+.followText {
+  margin-top: 0.4rem;
+  font-size: 0.85rem;
+  color: #6b3f2a;
+}
+
+.basketMiniInput::-webkit-outer-spin-button,
+.basketMiniInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.basketMiniInput {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.bakeryHeader {
+  grid-template-columns: 1fr minmax(320px, 620px) 1fr;
+}
+
+.logoArea {
+  grid-column: 2;
+  justify-self: center;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+
+  min-width: 0;
+  width: 100%;
+  transform: none;
+}
+
+.contactRow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+
+  width: 100%;
+  max-width: 720px;
+
+  margin-top: 0.75rem;
+  text-align: center;
+  white-space: normal;
+}
+
+.qrBox {
+  grid-column: 3;
+  justify-self: end;
+  align-self: center;
+
+  transform: translateY(45px);
+}
+
+.appointmentPage {
+    padding-left: 5rem;
+    margin-bottom: 5rem;
+
+    background: #fff0e7;
+    padding-top: 0;
+    padding-bottom: 4rem;
+}
+
+
+
+.cartContainer {
+  width: 100%;
+  max-width: 760px;
+  margin: 2.5rem auto;
+  padding: 2rem;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.cartTable {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.cartTable th,
+.cartTable td {
+  vertical-align: middle;
+}
+
+.cartTable th:nth-child(1),
+.cartTable td:nth-child(1) {
+  width: 45%;
+}
+
+.cartTable th:nth-child(2),
+.cartTable td:nth-child(2) {
+  width: 18%;
+  text-align: center;
+}
+
+.cartTable th:nth-child(3),
+.cartTable td:nth-child(3) {
+  width: 15%;
+  text-align: center;
+}
+
+.cartTable th:nth-child(4),
+.cartTable td:nth-child(4) {
+  width: 22%;
+  text-align: center;
+}
+
+.cartSummary {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1.25rem 0;
+}
+
+.cartSummary h3 {
+  margin: 0;
+  text-align: center;
+  color: #6b3f2a;
+  font-size: 2.5rem;
+  line-height: 0.95;
+}
+
+.checkoutButton {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.cartContainer {
+  width: 100%;
+  max-width: 760px;
+  margin: 2.5rem auto;
+  padding: 2rem;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.cartTable {
+  width: 100%;
+  table-layout: auto;
+}
+
+.cartTable th,
+.cartTable td {
+  vertical-align: middle;
+  white-space: normal;
+}
+
+.basketActionGroup {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 44px;
+}
+
+.cartSummary {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1.5rem 0;
+  text-align: center;
+}
+
+.cartSummary h3 {
+  margin: 0;
+  color: #6b3f2a;
+  font-size: 2.25rem;
+  line-height: 1.05;
+}
+
+.checkoutButton {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.checkoutButton {
+  width: 100%;
+  max-width: 640px;
+  margin: 1.5rem auto 0;
+  padding: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.bookBtn {
+  width: 100%;
+  height: 56px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #f3d8de;
+  color: #6b3f2a;
+  border: 1px solid rgba(217, 140, 157, 0.55);
+  border-radius: 14px;
+
+  font-size: 1.2rem;
+  font-weight: 800;
+  text-decoration: none;
+
+  box-shadow: 0 4px 12px rgba(217, 140, 157, 0.12);
+}
+
+.bookBtn:hover {
+  background: #eec8d2;
 }

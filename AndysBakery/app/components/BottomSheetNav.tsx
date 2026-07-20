@@ -7,16 +7,6 @@ import Link from 'next/link';
 import styles from './shoppingCart.module.css'
 
 
-
-type NavItem = { label: string; href: string }
-
-const items: NavItem[] = [
-    { label: "Services", href: "/services" },
-    { label: "Book", href: "/book" },
-    { label: "About", href: "/about" },
-    { label: "Contact", href: "/contact" },
-]
-
 export default function BottomSheetNav() {
 
 
@@ -66,13 +56,13 @@ export default function BottomSheetNav() {
                 </div>
 
                 <div className="sheetContent">
-                    <h3 className="sheetTitle"></h3>
+                    <h3 className="sheetTitle">Menu</h3>
                     <nav className="sheetNav">
-                        <Link className="sheetItem" href="/ ">Home</Link>
-                        <Link className="sheetItem" href="/services">Services</Link>
+                        <Link className="sheetItem" href="/">Home</Link>
+                        <Link className="sheetItem" href="/services">Order</Link>
+                        <Link className="sheetItem" href="/gallery">Gallery</Link>
+                        <Link className="sheetItem" href="/contact">Contact</Link>
                         <Link className="sheetItem" href="/policies">Policies</Link>
-                        {/* <Link className="sheetItem" href="/about">About</Link> */}
-                        {/* <Link className="sheetItem" href="/contact`">Contact </Link> */}
                     </nav>
                 </div>
             </div>
@@ -81,7 +71,7 @@ export default function BottomSheetNav() {
 
 
             <div className="fabWrapper">
-                <button className={`fab ${open ? "isOpen" : "isClose"}`} onClick={() => setOpen(true)}>Menu</button>
+               <button className={`fab ${open ? "isOpen" : "isClose"}`} onClick={() => setOpen(true)}>☰ Menu</button>
             </div>
 
             {/* <div className={styles.fabWrapper2}>
@@ -93,9 +83,6 @@ export default function BottomSheetNav() {
                 </button>
 
             </div> */}
-
-
-
 
         </>
     )
