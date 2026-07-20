@@ -1867,44 +1867,42 @@ main {
   font-family: var(--font-lobster);
   z-index: 60;
 
-  padding: 12px 18px;
-  border-radius: 999px;
-  border: 1px solid black;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
 
-  background: #c69986;
-  color: white;
-  font-weight: 600;
+  background: #f3d8de;
+  color: #6b3f2a;
+  border: 1px solid rgba(217, 140, 157, 0.75);
 
+  padding: 0 0.45rem;
+  width: 115px;
+  min-width: 0px;
+  height: 48px;
+
+  border-radius: 13px;
   cursor: pointer;
+  font-weight: 700;
+  font-size: 1.15rem;
+
   opacity: 1;
   pointer-events: auto;
-
 }
 
 .fab.isOpen {
-  font-family: var(--font-lobster);
-  bottom: 16px;
-  transform: translateY(150%);
-  z-index: 60;
-
-  padding: 12px 18px;
-  border-radius: 999px;
-  /* border: 1px solid rgba(255, 255, 255, 0.15); */
-
-  background: #c69986;
-  /* color: red; */
-  font-weight: 600;
-
-
-  transition: opacity 500ms cubic-bezier(0.22, 1, 0.36, 1),
-    transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+  opacity: 0;
+  pointer-events: none;
+  transform: none;
 }
 
 .fabWrapper {
   position: fixed;
-  left: 50%;
-  bottom: 16px;
-  transform: translateX(-50%);
+  top: 4.5rem;
+  left: 1.5rem;
+  bottom: auto;
+  transform: none;
+  z-index: 100;
 }
 
 /* Backdrop behind sheet */
@@ -1927,24 +1925,79 @@ main {
 /* Bottom sheet container */
 .bottomSheet {
   position: fixed;
+  top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
+  bottom: auto;
+  right: auto;
   z-index: 55;
+  overflow: hidden;
 
-  max-height: 70vh;
-  background: #c69986;
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
-  border-top-left-radius: 18px;
+  width: 280px;
+  height: 100vh;
+
+  background: #f4d1d9;
+  border-right: 1px solid #f0b6c4;
   border-top-right-radius: 18px;
+  border-bottom-right-radius: 18px;
 
-  transform: translateY(110%);
+  transform: translateX(-110%);
   transition: transform 220ms ease;
-  box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.35);
+  box-shadow: 20px 0 60px rgba(0, 0, 0, 0.35);
+}
+
+.bottomSheet::before {
+  content: "";
+  position: absolute;
+  top: -3rem;
+  left: 50%;
+
+  width: 100%;
+  height: 170px;
+
+  background-image: url("/images/NavFlowersTop.png");
+  background-size: 500px auto;
+  background-repeat: no-repeat;
+  background-position: center 42%;
+
+  opacity: 0.75;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.bottomSheet::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background-image: url("/images/NavSprinkles.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: top center;
+
+  mask-image: linear-gradient(
+  to bottom,
+  transparent 4%,
+  transparent 6%,
+  black 35%,
+  black 100%
+);
+
+-webkit-mask-image: linear-gradient(
+  to bottom,
+  transparent 4%,
+  transparent 6%,
+  black 35%,
+  black 100%
+);
+
+  opacity: 0.7;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .bottomSheet.isOpen {
-  transform: translateY(0%);
+  transform: translateX(0%);
 }
 
 .sheetHandleRow {
@@ -1968,7 +2021,7 @@ main {
   top: 8px;
   background: transparent;
   border: none;
-  color: rgba(255, 255, 255, 0.85);
+  color: #6b3f2a;
   font-size: 18px;
   cursor: pointer;
 }
@@ -1978,10 +2031,11 @@ main {
 }
 
 .sheetTitle {
-  margin: 8px 0 12px;
-  font-size: 14px;
-  letter-spacing: 0.02em;
-  color: rgba(255, 255, 255, 0.75);
+  margin: 0 0 1.5rem;
+  font-family: var(--font-lobster);
+  font-size: 2rem;
+  color: #6b3f2a;
+  text-align: left;
 }
 
 .sheetNav {
@@ -1993,6 +2047,8 @@ main {
   text-align: center;
   font-family: var(--font-lobster);
 
+  border-bottom: 1px solid rgba(217, 140, 157, 0.35);
+  padding-bottom: 1rem;
 
   background: transparent;
   color: #fff;
@@ -2000,7 +2056,7 @@ main {
 }
 
 .sheetItem:hover {
-  /* background: rgba(255,255,255,0.10); */
+  background: #f3d8de;
 }
 
 .brand {
@@ -2008,26 +2064,6 @@ main {
 }
 
 
-
-
-
-
-
-.topBar {
-  /* display: flex; */
-}
-
-.topBarContainer {}
-
-.topBarContent {
-  position: relative;
-  display: flex;
-  flex-direction: row;
-}
-
-.topBarItem {
-  padding: 1rem;
-}
 
 .imageStyle {
   border-radius: 15px;
@@ -2343,6 +2379,59 @@ h2,
 h3,
 button,
 .sheetItem,
+
 .sheetTitle {
-  font-family: "Quicksand", sans-serif;
+  width: 180px;
+  margin: 0 auto 1.5rem;
+
+  font-family: var(--font-lobster);
+  font-size: 3rem;
+  color: hsl(19, 44%, 29%);
+  text-align: center;
+}
+
+.sheetTitle::after {
+  content: "";
+  display: block;
+
+  width: 160px;
+  height: 8px;
+
+  margin: 0.25rem auto 0;
+
+  background: hsl(19, 44%, 29%);
+  border-radius: 999px;
+  opacity: 0.75;
+}
+
+.sheetContent {
+  position: relative;
+  z-index: 2;
+  padding: 5.5rem 1.5rem 1.5rem;
+}
+
+.sheetNav {
+  display: flex;
+  flex-direction: column;
+  gap: 1.35rem;
+  align-items: flex-start;
+}
+
+.sheetItem {
+  width: 100%;
+  padding: 0.85rem 1rem;
+
+  font-family: var(--font-lobster);
+  font-size: 1.45rem;
+  text-align: left;
+
+  color: #6b3f2a;
+  text-decoration: none;
+  cursor: pointer;
+
+  border-radius: 12px;
+}
+
+.sheetItem:hover {
+  background: rgba(255, 255, 255, 0.12);
 }

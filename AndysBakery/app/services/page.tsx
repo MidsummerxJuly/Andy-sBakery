@@ -1,9 +1,5 @@
 "use client";
-import TopBarNav from "../components/TopBarNav"
-import BottomSheetNav from "../components/BottomSheetNav"
-import lashlift1 from "../images/lashlift1.jpeg"
-import lashlift2 from "../images/lashlift2.jpeg"
-import fullSet1 from "../images/fullSet1.jpeg"
+import BottomSheetNav from "../components/BottomSheetNav";
 import pageCSS from "./page.module.css"
 import servicesCSS from "./services.module.css"
 import { BiMinusCircle, BiPlusCircle, BiChevronLeft, BiChevronRight } from "react-icons/bi";
@@ -200,7 +196,7 @@ const [customOptionPage, setCustomOptionPage] = useState<{ [key: string]: number
             alt=""
             className={pageCSS.flowerBanner}
           />
-          <button className={pageCSS.menuButton}>☰ Menu</button>
+          {/* <button className={pageCSS.menuButton}>☰ Menu</button> */}
 
           <div className={pageCSS.logoArea}>
             <Image
@@ -227,39 +223,50 @@ const [customOptionPage, setCustomOptionPage] = useState<{ [key: string]: number
           </div>
 
           <div className={pageCSS.headerWave}>
-            <svg viewBox="0 0 1200 24" preserveAspectRatio="none">
+            <svg viewBox="0 0 1200 70" preserveAspectRatio="none">
               <path
+                className={pageCSS.waveFill}
                 d="
-                  M0,12
-                  Q25,4 50,12
-                  T100,12
-                  T150,12
-                  T200,12
-                  T250,12
-                  T300,12
-                  T350,12
-                  T400,12
-                  T450,12
-                  T500,12
-                  T550,12
-                  T600,12
-                  T650,12
-                  T700,12
-                  T750,12
-                  T800,12
-                  T850,12
-                  T900,12
-                  T950,12
-                  T1000,12
-                  T1050,12
-                  T1100,12
-                  T1150,12
-                  T1200,12
+                  M0,28
+                  Q50,8 100,28
+                  T200,28
+                  T300,28
+                  T400,28
+                  T500,28
+                  T600,28
+                  T700,28
+                  T800,28
+                  T900,28
+                  T1000,28
+                  T1100,28
+                  T1200,28
+                  L1200,70
+                  L0,70
+                  Z
+                "
+              />
+
+              <path
+                className={pageCSS.waveLine}
+                d="
+                  M0,28
+                  Q50,8 100,28
+                  T200,28
+                  T300,28
+                  T400,28
+                  T500,28
+                  T600,28
+                  T700,28
+                  T800,28
+                  T900,28
+                  T1000,28
+                  T1100,28
+                  T1200,28
                 "
               />
             </svg>
           </div>
-        </header>
+          </header>
         
          <div className={pageCSS.appointmentPage}>
           <div className={servicesCSS.servicesPage}>
@@ -330,7 +337,7 @@ const [customOptionPage, setCustomOptionPage] = useState<{ [key: string]: number
                                   <p style={{ fontWeight: "bold" }}>Size:</p>
                                 )}
 
-                                <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+                                <div className={servicesCSS.sizeButtonGroup}>
                                   {item.sizes.map((size) => (
                                     <button
                                       className={
@@ -633,8 +640,8 @@ const [customOptionPage, setCustomOptionPage] = useState<{ [key: string]: number
 
             {exists ?
 
-              <div className={pageCSS.checkoutButton}style={{ display: "flex", marginTop: "1rem", justifyContent: "center", padding: "1rem" }}>
-                <Link href="/services/book" className={pageCSS.bookBtn} style={{ pointerEvents: "auto", color: "#6b3f2a", width: "auto", fontWeight: "bold" }}>
+              <div className={pageCSS.checkoutButton}>
+                <Link href="/services/book" className={pageCSS.bookBtn}>
                   Confirm Basket
                 </Link>
               </div>

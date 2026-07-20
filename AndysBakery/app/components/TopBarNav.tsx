@@ -9,11 +9,10 @@ export default function TopBarNav() {
                 <div className="topBarContainer">
                     <div className="topBarContent">
                         <Link href="/" className="topBarItem">Home</Link>
-
-                        {/* cart will maybe take to bookings?`` */}
-
-                        <Link href='/bookings' className="topBarItem">Cart</Link> 
-                        <Link href='/contact' className="topBarItem">Contact</Link>
+                        <Link href="/services" className="topBarItem">Order</Link>
+                        <Link href="/gallery" className="topBarItem">Gallery</Link>
+                        <Link href='/contact' className="topBarItem">Contact</Link> 
+                        <Link href='/policies' className="topBarItem">Policies</Link>
 
                     </div>
                 </div>
