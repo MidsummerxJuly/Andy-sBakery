@@ -1,75 +1,100 @@
-'use client';
+import Link from "next/link";
+import styles from "./page.module.css";
 
-import { useFormState } from "react-dom";
-// import { createAppointment } from "../actions";
+const policies = [
+  {
+    title: "Online Orders",
+    details: [
+      "Orders submitted through the website are reviewed by Andy’s Bakery after payment is completed.",
+      "Customers should include accurate contact information so the bakery can follow up if anything needs clarification.",
+      "Submitting an order does not guarantee changes can be made after payment, especially close to the selected pickup date.",
+    ],
+  },
+  {
+    title: "Payments",
+    details: [
+      "Website orders require payment at checkout before the order is marked as paid.",
+      "Unpaid or canceled checkout orders are not considered confirmed.",
+      "If there is an issue during payment, customers should contact the bakery before submitting a duplicate order.",
+    ],
+  },
+  {
+    title: "Custom Cakes",
+    details: [
+      "Custom cake prices may vary depending on size, flavor, filling, decorations, and design complexity.",
+      "Customers should include design notes, theme ideas, colors, and serving size when placing a custom order.",
+      "Andy’s Bakery may contact the customer if a requested design needs to be adjusted.",
+    ],
+  },
+  {
+    title: "Pickup",
+    details: [
+      "Customers are responsible for picking up orders on the selected date unless another arrangement has been confirmed.",
+      "Pickup details may be confirmed by email, phone, or text.",
+      "Orders should be handled carefully after pickup, especially cakes and decorated desserts.",
+    ],
+  },
+  {
+    title: "Changes and Cancellations",
+    details: [
+      "Order changes should be requested as early as possible.",
+      "Some changes may not be available after preparation has started.",
+      "Cancellation and refund decisions may depend on the order type, ingredients purchased, and preparation progress.",
+    ],
+  },
+  {
+    title: "Allergens",
+    details: [
+      "Bakery items may contain or come into contact with common allergens including wheat, milk, eggs, soy, peanuts, and tree nuts.",
+      "Customers with allergies should contact the bakery before ordering.",
+      "Andy’s Bakery cannot guarantee that items are completely free from cross-contact.",
+    ],
+  },
+];
 
-import BottomSheetNav from "../components/BottomSheetNav"
-import { db } from "../db"
-import { appointmentsTable } from "../db/schema"
-import { useActionState } from "react";
-import styles from "./page.module.css"
-
-
-export default function Policies() {
-
-  const policies = [
-    {
-      title: "Deposit",
-      text: "A $20 deposit is required to book your appointment.",
-    },
-    {
-      title: "Cancellations & Rescheduling",
-      text: "If you need to cancel or reschedule, please let me know at least 48 hours before your appointment. Anything later may be subject to a fee depending on the situation.",
-    },
-    {
-      title: "Foreign Fills",
-      text: "Foreign fills will incur a $40 fee.",
-    },
-    {
-      title: "Squeeze-In Appointments",
-      text: "Any appointment not listed on my schedule is considered a squeeze-in and will include a $40 fee.",
-    },
-    {
-      title: "Fill Appointments",
-      text: "Fill appointments require at least 40% of lashes remaining on each eye. Anything less will be priced as a full set.",
-    },
-    {
-      title: "Grace Period",
-      text: "A 10-minute grace period is provided. After 10 minutes, a $15 late fee may apply.",
-    },
-    {
-      title: "Guests",
-      text: "You may bring a guest, but please let me know before your appointment.",
-    },
-
-  ];
-
+export default function PoliciesPage() {
   return (
-    <div >
-      <div className={styles.policiesPage}>
-        <section className={styles.policiesHero}>
-          <h1>Booking Policies</h1>
-          <p>
-            Please review all policies before booking your appointment.
-          </p>
-        </section>
+    <main className={styles.policiesPage}>
+      <section className={styles.hero}>
+        <p className={styles.eyebrow}>Andy’s Bakery</p>
+        <h1>Order Policies</h1>
+        <p>
+          Please review these policies before placing an order. They help keep
+          the ordering process clear for both customers and the bakery.
+        </p>
+      </section>
 
-        <section className={styles.policiesGrid}>
-          {policies.map((policy) => (
-            <div className={styles.policyCard} key={policy.title}>
-              <h2>{policy.title}</h2>
-              <p>{policy.text}</p>
-            </div>
-          ))}
-        </section>
-      </div>
+      <section className={styles.policyList}>
+        {policies.map((policy) => (
+          <article key={policy.title} className={styles.policyCard}>
+            <h2>{policy.title}</h2>
 
-      {/* give space for the menu button  */}
-      <div style={{ marginTop: "2rem" }}> </div>
+            <ul>
+              {policy.details.map((detail) => (
+                <li key={detail}>{detail}</li>
+              ))}
+            </ul>
+          </article>
+        ))}
+      </section>
 
+      <section className={styles.noticeSection}>
+        <h2>Questions before ordering?</h2>
+        <p>
+          Contact Andy’s Bakery before submitting your order if you need help
+          with sizing, flavors, pickup details, or custom design questions.
+        </p>
 
-      <BottomSheetNav />
+        <div className={styles.buttonRow}>
+          <Link href="/contact" className={styles.primaryButton}>
+            Contact Us
+          </Link>
 
-    </div>
-  )
+          <Link href="/services" className={styles.secondaryButton}>
+            Start an Order
+          </Link>
+        </div>
+      </section>
+    </main>
+  );
 }
