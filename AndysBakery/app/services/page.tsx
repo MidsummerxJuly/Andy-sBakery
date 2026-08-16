@@ -223,6 +223,7 @@ export default function Services() {
   // const router = useRouter() // used for cleaner redirects as buttons
   const [openCategory, setOpenCategory] = useState<string | null>(null);
   const [openItem, setOpenItem] = useState<string | null>(null);
+  const [recentlyAddedItem, setRecentlyAddedItem] = useState<string | null>(null);
   const [quantityInputs, setQuantityInputs] = useState<{ [key: string]: string }>({});
   const [activeQtyEditor, setActiveQtyEditor] = useState<{
     id: string;
@@ -403,7 +404,7 @@ const [customOptionPage, setCustomOptionPage] = useState<{ [key: string]: number
                             <span>{item.name}</span>
 
                             <span className={servicesCSS.itemArrow}>
-                              {openItem === item.id ? "▴" : "▾"}
+                              {openItem === item.id ? "Hide details" : "Click for details"}
                             </span>
                           </button>
 
@@ -577,22 +578,29 @@ const [customOptionPage, setCustomOptionPage] = useState<{ [key: string]: number
                           onClick={() => {
                             const quantity = Number(quantityInputs[item.id] || 1);
 
-                            updateQuantity(
-                              {
-                                id: item.id,
-                                name: currentSize
-                                  ? `${item.name} - ${currentSize.size}`
-                                  : item.name,
-                                price: currentSize?.price ?? item.price ?? 0,
-                                duration: item.duration || 0,
-                                quantity: 1,
-                              },
-                              quantity > 0 ? quantity : 1
-                            );
+                            addToCart({
+                              id: item.id,
+                              name: currentSize
+                                ? `${item.name} - ${currentSize.size}`
+                                : item.name,
+                              price: currentSize?.price ?? item.price ?? 0,
+                              duration: item.duration || 0,
+                              quantity: quantity > 0 ? quantity : 1,
+                            });
+                            setRecentlyAddedItem(item.id);
+                            window.setTimeout(() => {
+                              setRecentlyAddedItem((currentItem) =>
+                                currentItem === item.id ? null : currentItem
+                              );
+                            }, 1200);
                           }}
-                          className={servicesCSS.orderAddButton}
-                        >
-                          Add to Basket
+                          className={`${servicesCSS.orderAddButton} ${
+                            recentlyAddedItem === item.id
+                              ? servicesCSS.orderAddButtonAdded
+                              : ""
+                          }`}
+                          >
+                            {recentlyAddedItem === item.id ? "Added ✓" : "Add to Basket"}
                         </div>
                       </div>
                     )}

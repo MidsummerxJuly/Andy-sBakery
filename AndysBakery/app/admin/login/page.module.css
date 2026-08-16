@@ -35,7 +35,8 @@
 .loginCard h1 {
   margin: 0;
   font-family: var(--font-lobster);
-  font-size: clamp(2.7rem, 8vw, 4.5rem);
+  font-size: clamp(2.25rem, 6vw, 3.35rem);
+  line-height: 1.18;
   line-height: 0.95;
   color: #6b3f2a;
   text-align: center;
@@ -119,4 +120,11 @@
 .loginForm button:disabled {
   opacity: 0.65;
   cursor: not-allowed;
+}
+
+.loginCard h1 {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  text-align: center;
 }

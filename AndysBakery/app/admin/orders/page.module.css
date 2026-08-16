@@ -603,3 +603,106 @@
     text-align: center;
   }
 }
+
+/* Centered dashboard header */
+.adminHeader {
+  position: relative;
+  display: block;
+  padding: 2rem 7rem;
+  text-align: center;
+}
+
+.adminHeader > div {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* Proper logout button */
+.logoutButton {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.4rem;
+  padding: 0.55rem 1rem;
+  border: 1px solid #5c2e19;
+  border-radius: 999px;
+  background: #5c2e19;
+  color: #fffaf5;
+  font: inherit;
+  font-size: 0.88rem;
+  line-height: 1;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 7px 16px rgba(73, 38, 14, 0.16);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.logoutButton:hover {
+  background: #7a4023;
+  transform: translateY(-1px);
+}
+
+.logoutButton:focus-visible {
+  outline: 3px solid rgba(154, 90, 45, 0.3);
+  outline-offset: 3px;
+}
+
+/* Vertically center the filter arrow */
+.filterSummaryIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transform: translateY(-2px);
+}
+
+.filtersCard[open] .filterSummaryIcon {
+  transform: translateY(-2px) rotate(180deg);
+}
+
+@media (max-width: 700px) {
+  .adminHeader {
+    padding: 4.25rem 1.25rem 1.75rem;
+  }
+
+  .logoutButton {
+    top: 1rem;
+    right: 1rem;
+  }
+}
+
+/* Center the complete dashboard heading */
+.adminHeader h1 {
+  width: 100%;
+  max-width: none;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* Draw a properly centered filter chevron */
+.filterSummaryIcon {
+  position: relative;
+  padding: 0;
+  font-size: 0;
+  transform: none;
+}
+
+.filterSummaryIcon::before {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+}
+
+.filtersCard[open] .filterSummaryIcon {
+  transform: none;
+}
+
+.filtersCard[open] .filterSummaryIcon::before {
+  transform: translateY(2px) rotate(225deg);
+}

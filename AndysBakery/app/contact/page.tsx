@@ -1,5 +1,6 @@
 import Link from "next/link";
 import styles from "./page.module.css";
+import BottomSheetNav from "../components/BottomSheetNav";
 
 const contactEmail = "yourbakeryemail@gmail.com";
 const contactPhone = "754-242-4383";
@@ -8,6 +9,7 @@ const locationText = "6947 Stirling Road, Davie, FL 33314";
 export default function ContactPage() {
   return (
     <main className={styles.contactPage}>
+      <BottomSheetNav />
       <section className={styles.hero}>
         <p className={styles.eyebrow}>Contact Andy’s Bakery</p>
         <h1>Questions about an order?</h1>

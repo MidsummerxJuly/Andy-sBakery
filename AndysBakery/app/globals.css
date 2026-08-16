@@ -2374,22 +2374,6 @@ body {
   font-family: "Nunito", sans-serif;
 }
 
-h1,
-h2,
-h3,
-button,
-.sheetItem,
-
-.sheetTitle {
-  width: 180px;
-  margin: 0 auto 1.5rem;
-
-  font-family: var(--font-lobster);
-  font-size: 3rem;
-  color: hsl(19, 44%, 29%);
-  text-align: center;
-}
-
 .sheetTitle::after {
   content: "";
   display: block;
@@ -2434,4 +2418,25 @@ button,
 
 .sheetItem:hover {
   background: rgba(255, 255, 255, 0.12);
+}
+
+h1,
+h2,
+h3,
+button,
+.sheetItem,
+.sheetTitle {
+  font-family: var(--font-lobster);
+  color: hsl(19, 44%, 29%);
+}
+
+.sheetTitle {
+  width: 180px;
+  margin: 0 auto 1.5rem;
+  font-size: 3rem;
+  text-align: center;
+}
+
+.fab.isClose {
+  border: 2px solid #df8fa3;
 }

@@ -893,3 +893,8 @@
   object-fit: cover;
   display: block;
 }
+
+.waveLine {
+  stroke: rgba(217, 140, 157, 0.78);
+  stroke-width: 4.5;
+}

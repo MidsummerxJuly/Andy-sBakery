@@ -46,7 +46,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         cartItem.id === item.id
           ? {
               ...cartItem,
-              quantity: cartItem.quantity + 1,
+              quantity: cartItem.quantity + Math.max(item.quantity, 1),
             }
           : cartItem
       );

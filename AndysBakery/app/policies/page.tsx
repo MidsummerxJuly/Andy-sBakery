@@ -1,5 +1,6 @@
 import Link from "next/link";
 import styles from "./page.module.css";
+import BottomSheetNav from "../components/BottomSheetNav";
 
 const policies = [
   {
@@ -55,6 +56,7 @@ const policies = [
 export default function PoliciesPage() {
   return (
     <main className={styles.policiesPage}>
+      <BottomSheetNav />
       <section className={styles.hero}>
         <p className={styles.eyebrow}>Andy’s Bakery</p>
         <h1>Order Policies</h1>

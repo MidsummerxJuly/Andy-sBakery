@@ -138,3 +138,60 @@
     width: 100%;
   }
 }
+
+/* Match the main bakery theme */
+.policiesPage {
+  background:
+    radial-gradient(circle at top left, rgba(243, 216, 222, 0.82), transparent 34rem),
+    linear-gradient(135deg, #fff9f7 0%, #fff0e7 50%, #fce7ec 100%);
+}
+
+.hero {
+  padding-top: 5rem;
+}
+
+.hero h1 {
+  width: 100%;
+  max-width: 850px;
+  margin: 0 auto;
+  line-height: 1.05;
+  text-align: center;
+}
+
+.eyebrow {
+  color: #b8667b;
+}
+
+.policyCard,
+.noticeSection {
+  background: rgba(255, 252, 251, 0.94);
+  border: 2px solid rgba(217, 140, 157, 0.48);
+  box-shadow: 0 16px 38px rgba(184, 102, 123, 0.1);
+}
+
+.policyCard:nth-child(even) {
+  background: #fff7f4;
+}
+
+.policyCard h2 {
+  color: #6b3f2a;
+  line-height: 1.1;
+}
+
+.noticeSection {
+  background: linear-gradient(135deg, #fffafb, #f8dfe5);
+}
+
+.primaryButton {
+  background: #c8758b;
+  color: #fff;
+}
+
+.primaryButton:hover {
+  background: #b8667b;
+}
+
+.secondaryButton {
+  background: #fff8f4;
+  border: 2px solid #e5a7b6;
+}
