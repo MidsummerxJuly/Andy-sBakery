@@ -1,516 +1,411 @@
-"use client"
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import BottomSheetNav from "@/app/components/BottomSheetNav";
 import { useCart } from "@/app/context/cartContext";
-import styles from "./page.module.css"
-import { experimental_taintObjectReference, use, useEffect, useState } from "react";
-import { index, unique } from "drizzle-orm/gel-core";
-import { BookingData, BookingProvider, useBooking } from "@/app/context/bookingContext";
-import { ConsoleLogWriter } from "drizzle-orm";
-import { json } from "stream/consumers";
-import { endpointClientChangedSubscribe } from "next/dist/build/swc/generated-native";
-import { convertIndexToString, date } from "drizzle-orm/mysql-core";
-// import { createAppointment } from "@/app/actions";
-import { Elements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
-import CheckoutPage from "@/app/components/CheckoutPage";
-import { DocusealForm } from '@docuseal/react';
-import { DocusealBuilder } from '@docuseal/react'
-import { useRef } from 'react';
-import SignaturePad from "@/app/components/SignaturePad";
+import styles from "./page.module.css";
 
+function formatPhoneNumber(value: string) {
+  const digits = value.replace(/\D/g, "").slice(0, 10);
 
+  if (digits.length <= 3) {
+    return digits;
+  }
 
+  if (digits.length <= 6) {
+    return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+  }
 
-const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
-const monthNames = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
-];
-
-
-const amount = 2000.00; // 2000 cents = 20 dollars lol
-
-async function fetchBookedDates() {
-
-    const res = await fetch("/api/appointments");
-    const data = await res.json();
-
-    // console.log(data.data);
-    // console.log("db pulled");
-
-    return data.data;
+  return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`;
 }
 
+function toCents(price: number) {
+  return Math.round(price * 100);
+}
+
+function formatMoneyFromCents(cents: number) {
+  return `$${(cents / 100).toFixed(2)}`;
+}
+
+function getCleanItemName(name: string) {
+  return name.split(" - ")[0];
+}
+
+function getSizeFromCartName(name: string) {
+  return name.includes(" - ") ? name.split(" - ")[1] : "";
+}
+
+function getCategoryFromName(name: string) {
+  const lowerName = name.toLowerCase();
+
+  if (lowerName.includes("custom")) return "Custom Orders";
+  if (lowerName.includes("cake")) return "Cakes";
+  if (lowerName.includes("croissant") || lowerName.includes("pastry")) return "Pastries";
+  if (lowerName.includes("bread") || lowerName.includes("sourdough")) return "Bread";
+
+  return "Bakery Item";
+}
 
 export default function Book() {
+  const { cart } = useCart();
 
+  const [hasMounted, setHasMounted] = useState(false);
 
+  const [customerName, setCustomerName] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
+  const [customerEmail, setCustomerEmail] = useState("");
+  const [fulfillmentType, setFulfillmentType] = useState("pickup");
+  const [orderMonth, setOrderMonth] = useState("");
+  const [orderDay, setOrderDay] = useState("");
+  const [orderYear, setOrderYear] = useState("");
+  const [customerNotes, setCustomerNotes] = useState("");
 
-    if (process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY == undefined) {
-        throw new Error("Public key invalid");
-    }
-    const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [orderId, setOrderId] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState("");
 
-    const [currentMonth, setCurrentMonth] = useState(new Date());
-    const [selectedDate, setSelectedDate] = useState<Date | null>(null); // <<<<<<<<<<<<<<<<<<<<<
-    const [selectedTime, setSelectedTime] = useState<string | null>(null);
-    const [bookedTimes, setBookedTimes] = useState<any[]>([]);
-    const [endTime, setEndTime] = useState<string>("");
-    let endAt: string = "";
+  const currentYear = new Date().getFullYear();
 
-    useEffect(() => {
-        async function load() {
-            const data = await fetchBookedDates();
-            setBookedTimes(data);
-            // console.log(data);
-        }
-        load();
+  const yearOptions = [currentYear, currentYear + 1, currentYear + 2];
 
-    }, []);
+  const monthOptions = [
+    { value: "01", label: "January" },
+    { value: "02", label: "February" },
+    { value: "03", label: "March" },
+    { value: "04", label: "April" },
+    { value: "05", label: "May" },
+    { value: "06", label: "June" },
+    { value: "07", label: "July" },
+    { value: "08", label: "August" },
+    { value: "09", label: "September" },
+    { value: "10", label: "October" },
+    { value: "11", label: "November" },
+    { value: "12", label: "December" },
+  ];
 
+  const daysInSelectedMonth =
+    orderMonth && orderYear
+      ? new Date(Number(orderYear), Number(orderMonth), 0).getDate()
+      : 31;
 
+  const dayOptions = Array.from({ length: daysInSelectedMonth }, (_, index) => {
+    const day = index + 1;
+    return String(day).padStart(2, "0");
+  });
 
-    //cart logic
-    const { cart } = useCart();
-    const { addToCart } = useCart();
-    const { removeFromCart } = useCart();
-    const { clearCart } = useCart();
-    const { checkCart } = useCart();
+  const orderDate =
+    orderMonth && orderDay && orderYear
+      ? `${orderYear}-${orderMonth}-${orderDay}`
+      : "";
 
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
 
+  const subtotalCents = cart.reduce((total, item) => {
+    return total + toCents(item.price) * item.quantity;
+  }, 0);
 
-    function calculateEndTimeToString(time: number) {
-        const hours = Math.floor(time);
-        const minutes = (time % 1) * 60;
+  const totalCents = subtotalCents;
 
-        const period = hours >= 12 ? "PM" : "AM";
+  const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail);
 
-        let displayHour = hours % 12;
-        if (displayHour === 0) displayHour = 12;
+  const isFormReady =
+    cart.length > 0 &&
+    customerName.trim() !== "" &&
+    customerPhone.trim() !== "" &&
+    isEmailValid &&
+    fulfillmentType.trim() !== "" &&
+    orderDate.trim() !== "";
 
-        const minuteStr = minutes === 0 ? "00" : minutes.toString();
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
 
-
-        return `${displayHour}:${minuteStr} ${period}`;
-    }
-    // DETERMINE HOW LONG THE CLIENT SESSION WILL BE FOR BOOKING
-
-    const totalMinutes = cart.reduce(
-        (sum, item) => sum + item.duration, 0
-    );
-
-    const totalHours = totalMinutes / 60;
-
-
-    useEffect(() => {
-        if (selectedTime?.includes("9:00")) {
-            setEndTime(calculateEndTimeToString(9 + totalHours));
-        }
-        else if (selectedTime?.includes("10:00")) {
-            setEndTime(calculateEndTimeToString(10 + totalHours));
-        }
-        else if (selectedTime?.includes("11:00")) {
-            setEndTime(calculateEndTimeToString(11 + totalHours));
-        }
-        else if (selectedTime?.includes("12:00")) {
-            setEndTime(calculateEndTimeToString(12 + totalHours));
-        }
-        else if (selectedTime?.includes("1:00")) {
-            setEndTime(calculateEndTimeToString(1 + totalHours));
-        }
-        else if (selectedTime?.includes("2:00")) {
-            setEndTime(calculateEndTimeToString(2 + totalHours));
-        }
-        else if (selectedTime?.includes("3:00")) {
-            setEndTime(calculateEndTimeToString(3 + totalHours));
-        }
-        else if (selectedTime?.includes("4:00")) {
-            setEndTime(calculateEndTimeToString(4 + totalHours));
-        }
-
-
-        // console.log(totalHours);
-        // console.log(totalMinutes);
-        // console.log(calculateEndTimeToString(totalHours + 9));
-        // console.log(cart);
-    }, [selectedTime]);
-
-    useEffect(() => {
-        setSelectedTime(null);
-
-    }, [selectedDate]);
-
-    // bookingData vars
-
-    // const [uniqueBookingID, setUniqueBookingID] = useState("");
-    const [customerName, setCustomerName] = useState("");
-    const [customerPhone, setCustomerPhone] = useState("");
-    const [customerEmail, setCustomerEmail] = useState("");
-    const [customerNotes, setCustomerNotes] = useState("");
-    const [validEmail, setValidEmail] = useState(false);
-    const [submitted, setSubmitted] = useState(false);
-
-    useEffect(() => {
-        function isValidEmail(value: unknown): value is string {
-            return (
-                typeof value === "string" &&
-                /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
-            );
-        }
-
-        if (isValidEmail(customerEmail))
-            setValidEmail(true);
-        else
-            setValidEmail(false);
-
-    }, [customerEmail]);
-
-
-    // booking logic
-    const { booking } = useBooking();
-    const { clearBooking } = useBooking();
-    const { checkBooking } = useBooking();
-    const { addBooking } = useBooking();
-
-
-    function getCalendarDays(date: Date) {
-        const year = date.getFullYear();
-        const month = date.getMonth();
-
-        const firstDayOfTheMonth = new Date(year, month, 1);
-        const lastDayOfTheMonth = new Date(year, month + 1, 0);
-
-        const startDay = firstDayOfTheMonth.getDay();
-        const daysInMonth = lastDayOfTheMonth.getDate();
-
-        const days: (Date | null)[] = []; // <<<<<<<<<<<<<<<<<<<<<
-
-        for (let i = 0; i < startDay; i++) {
-            days.push(null);
-        }
-
-        for (let day = 1; day <= daysInMonth; day++) {
-            days.push(new Date(year, month, day));
-        }
-
-        // fill remaining cells to make full weeks
-        while (days.length % 7 !== 0) {
-            days.push(null);
-        }
-
-        return days;
-
+    if (!isFormReady) {
+      setErrorMessage("Please complete all required fields before continuing.");
+      return;
     }
 
-    const calendarDays = getCalendarDays(currentMonth);
+    setIsSubmitting(true);
+    setErrorMessage("");
 
+    const orderPayload = {
+      customer_name: customerName,
+      customer_phone: customerPhone,
+      customer_email: customerEmail,
 
-    function handlePreviousMonth() {
-        setCurrentMonth(
-            new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1)
-        );
-    }
+      subtotal_cents: subtotalCents,
+      total_cents: totalCents,
 
-    function handleNextMonth() {
-        setCurrentMonth(
-            new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1)
-        );
-    }
+      fulfillment_type: fulfillmentType,
+      pickup: fulfillmentType === "pickup" ? "Bakery pickup" : "Delivery requested",
+      order_date: orderDate,
+      customer_notes: customerNotes,
 
-    function convertToDashFormat(dateStr: string) {
-        const [month, day, year] = dateStr.split("/");
+      items: cart.map((item) => ({
+        item_name: getCleanItemName(item.name),
+        category: getCategoryFromName(item.name),
+        size: getSizeFromCartName(item.name),
+        quantity: item.quantity,
+        unit_price_cents: toCents(item.price),
+        line_total_cents: toCents(item.price) * item.quantity,
+        custom_cake_options_json: "",
+      })),
+    };
 
-        return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
-    }
+    try {
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(orderPayload),
+      });
 
-    function timeToNumber(time: string) {
-        const [clock, period] = time.split(" ");
-        let [hours, minutes] = clock.split(":").map(Number);
+      const result = await response.json();
 
-        if (period === "PM" && hours !== 12) hours += 12;
-        if (period === "AM" && hours === 12) hours = 0;
+      if (!response.ok || !result.success) {
+        throw new Error(result.message || "Failed to create order.");
+      }
 
-        return hours + minutes / 60;
-    }
+      setOrderId(result.orderId);
 
-    function isTimeUnavailable(
-        time: string,
-        selectedDate: Date,
-        bookedTimes: any[]
-    ) {
-
-        const formattedDate = selectedDate
-            ? selectedDate.toISOString().split("T")[0]
-            : null;
-
-
-        if (!formattedDate) return false;
-
-        // console.log(bookedTimes);
-        return bookedTimes.some((booking) => {
-            const bookingDate = convertToDashFormat(booking.date);
-
-            // console.log("booking date in DB: " + bookingDate);
-            // console.log("selecting for this date: " + formattedDate);
-            // console.log(booking.startTime);
-            // console.log(time);
-
-            const selectedTimeNumber = timeToNumber(time);
-            const startTimeNumber = timeToNumber(booking.startTime);
-            const endTimeNumber = timeToNumber(booking.endTime);
-
-            return (
-                bookingDate === formattedDate &&
-                selectedTimeNumber >= startTimeNumber &&
-                selectedTimeNumber < endTimeNumber
-            );
+        const paymentResponse = await fetch("/api/payment", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            orderId: result.orderId,
+          }),
         });
-    }
 
-    function isTodayAvailable(day: Date | null) {
-        if (!day) return false;
-        if (day.getDay() == 0) {
-            return false;
-        }
-        else if (day.getDay() == 1) {
-            return false;
+        const paymentResult = await paymentResponse.json();
+
+        if (!paymentResponse.ok || !paymentResult.success) {
+          throw new Error(paymentResult.message || "Failed to create payment checkout.");
         }
 
-        return true;
+        window.location.href = paymentResult.checkoutUrl;
+    } catch (error) {
+      console.error(error);
+      setErrorMessage("Something went wrong while creating the order.");
+    } finally {
+      setIsSubmitting(false);
     }
-    return (
+  }
 
-        <div className="body-wrap boxed-container">
+  if (!hasMounted) {
+    return null;
+  }
 
-            {cart.length > 0 &&
-                <div className={styles.bookingWrapper}>
-                    <div className={styles.returnBtn}
-                        style={{ position: "fixed", display: "flex", margin: "1rem", color: "white", borderRadius: "10px", backgroundColor: "black", zIndex: "1000", bottom: "0", justifyContent: "center", alignItems: "center" }}
+  return (
+    <div className={styles.checkoutPage}>
+      <main className={styles.checkoutShell}>
+        <div className={styles.topRow}>
+          <Link href="/services" className={styles.backLink}>
+            ← Return to Order Page
+          </Link>
+        </div>
+
+        <section className={styles.headerSection}>
+          <p className={styles.eyebrow}>Checkout</p>
+          <h1 className={styles.pageTitle}>Complete Your Bakery Order</h1>
+          <p className={styles.pageIntro}>
+            Review your basket, add your contact details, and choose your requested pickup date.
+          </p>
+        </section>
+
+        {cart.length <= 0 && (
+          <section className={styles.emptyCard}>
+            <h2>Your basket is empty.</h2>
+            <p>Please return to the order page and add at least one item before checking out.</p>
+            <Link href="/services" className={styles.primaryLink}>
+              Start an Order
+            </Link>
+          </section>
+        )}
+
+        {cart.length > 0 && (
+          <div className={styles.checkoutGrid}>
+            <section className={styles.card}>
+              <h2 className={styles.sectionTitle}>Your Basket</h2>
+
+              <div className={styles.basketList}>
+                {cart.map((item) => {
+                  const lineTotalCents = toCents(item.price) * item.quantity;
+
+                  return (
+                    <div key={item.id} className={styles.basketItem}>
+                      <div>
+                        <h3>{item.name}</h3>
+                        <p>
+                          {item.quantity} × {formatMoneyFromCents(toCents(item.price))}
+                        </p>
+                      </div>
+
+                      <strong>{formatMoneyFromCents(lineTotalCents)}</strong>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className={styles.totalBox}>
+                <span>Subtotal</span>
+                <strong>{formatMoneyFromCents(subtotalCents)}</strong>
+              </div>
+
+              <div className={styles.totalBox}>
+                <span>Total</span>
+                <strong>{formatMoneyFromCents(totalCents)}</strong>
+              </div>
+            </section>
+
+            <section className={styles.card}>
+              <h2 className={styles.sectionTitle}>Customer Details</h2>
+
+
+              <form className={styles.checkoutForm} onSubmit={handleSubmit}>
+                <label className={styles.formField}>
+                  Name *
+                  <input
+                    type="text"
+                    value={customerName}
+                    onChange={(event) => setCustomerName(event.target.value)}
+                    placeholder="Customer name"
+                  />
+                </label>
+
+                <label className={styles.formField}>
+                  Phone *
+                  <input
+                    type="tel"
+                    inputMode="numeric"
+                    value={customerPhone}
+                    onChange={(event) => setCustomerPhone(formatPhoneNumber(event.target.value))}
+                    placeholder="000-000-0000"
+                    maxLength={12}
+                  />
+                </label>
+
+                <label className={styles.formField}>
+                  Email *
+                  <input
+                    type="email"
+                    value={customerEmail}
+                    onChange={(event) => setCustomerEmail(event.target.value)}
+                    placeholder="Email address"
+                  />
+                </label>
+
+                <label className={styles.formField}>
+                  Fulfillment *
+                  <select
+                    value={fulfillmentType}
+                    onChange={(event) => setFulfillmentType(event.target.value)}
+                  >
+                    <option value="pickup">Pickup</option>
+                    <option value="delivery">Delivery Requested</option>
+                  </select>
+                </label>
+
+                <div className={styles.formField}>
+                  <span>Requested Date *</span>
+
+                  <div className={styles.dateSelectRow}>
+                    <select
+                      value={orderMonth}
+                      onChange={(event) => {
+                        setOrderMonth(event.target.value);
+                        setOrderDay("");
+                      }}
                     >
-                        <Link href="/services/" style={{ color: "white" }}>
-                            Return to Services
-                        </Link>
-                    </div>
-                    <div>
-                        <div className={styles.container}>
-                            <div className="datePicker" style={{ paddingTop: "2rem", marginLeft: "1rem", color: "black", fontWeight: "bold" }}>
-                                When would you like to book your appointment?
-                            </div>
+                      <option value="">Month</option>
+                      {monthOptions.map((month) => (
+                        <option key={month.value} value={month.value}>
+                          {month.label}
+                        </option>
+                      ))}
+                    </select>
 
-                            <div className="calendar">
-                                <div className="calendar__month">
-                                    <div className="cal-month__previous" onClick={handlePreviousMonth}>Prev</div>
-                                    <div className="cal-month__current">{monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}</div>
-                                    <div className="cal-month__next" onClick={handleNextMonth}>Next</div>
-                                </div>
-                                <div className="calendar__head">
-                                    {dayNames.map((day) => (
-                                        <div key={day} className="cal-head__day">
-                                            {day}
-                                        </div>
-                                    ))}
-                                </div>
-                                <div className="calendar__body">
-                                    {calendarDays.map((day, index) => {
+                    <select
+                      value={orderDay}
+                      onChange={(event) => setOrderDay(event.target.value)}
+                    >
+                      <option value="">Day</option>
+                      {dayOptions.map((day) => (
+                        <option key={day} value={day}>
+                          {day}
+                        </option>
+                      ))}
+                    </select>
 
-                                        const available = isTodayAvailable(day)
-                                        const isSelected =
-                                            !!day &&
-                                            !!selectedDate &&
-                                            day.toDateString() === selectedDate.toDateString();
-
-                                        if (available) {
-
-                                            return (
-                                                <div className={isSelected ? 'cal-body__daySelected' : 'cal-body__day'} key={index} onClick={() => {
-                                                    setSelectedDate(day);
-                                                }
-                                                }>
-                                                    {day ? day.getDate() : ""}
-                                                </div>
-                                            );
-                                        }
-                                        else {
-                                            return (
-
-                                                <div className="cal-body__dayDisabled" key={index}>
-                                                    {day ? day.getDate() : ""}
-                                                </div>
-                                            );
-                                        }
-                                    })}
-                                </div>
-                            </div>
-
-                            {/* 
-                        {
-                            selectedDate &&
-                            <div style={{ marginRight: "3rem", color: "rgb(198, 153, 134)", fontWeight: "bold", display: "flex", flexDirection: "row-reverse" }}>
-                                {selectedDate.toLocaleDateString()}
-                            </div>
-                        } */}
-                            {
-                                selectedDate &&
-                                <div className={styles.feedForm} style={{display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
-                                    <div style={{ color: "black", fontWeight: "bold" }}>
-                                        What time?
-                                    </div>
-                                    <div style={{ marginRight: "1rem", color: "rgb(198, 153, 134)", fontWeight: "bold", display: "flex", flexDirection: "row-reverse" }}>
-                                        {selectedDate.toLocaleDateString()}
-                                    </div>
-                                </div>
-
-                                // <div style={{display: "flex", justifyContent: "space-between", flexDirection: "row" }}>
-                                //     <div style={{ color: "black", fontWeight: "bold" }}>
-                                //         What time?
-                                //     </div>
-                                //     <div style={{ marginRight: "1rem", color: "black", fontWeight: "bold", display: "flex", flexDirection: "row-reverse" }}>
-                                //         {selectedDate.toLocaleDateString()}
-                                //     </div>
-                                // </div>
-                            }
-
-
-                            <div className={styles.timeGrid} style={{ paddingTop: "1rem" }}>
-                                {[
-                                    "9:00 AM", "10:00 AM",
-                                    "11:00 AM", "12:00 PM",
-                                    "1:00 PM", "2:00 PM",
-                                    "3:00 PM", "4:00 PM"
-                                ].map((time) => {
-                                    if (!selectedDate) return false;
-
-                                    const unavailable = isTimeUnavailable(time, selectedDate, bookedTimes);
-
-                                    return (
-                                        <button
-                                            key={time}
-                                            className={`${styles.timeBtn} ${selectedTime === time ? styles.active : ""}`}
-                                            disabled={unavailable}
-                                            onClick={() => {
-                                                if (!unavailable) {
-                                                    setSelectedTime(time);
-                                                }
-                                                else setSelectedTime(null);
-                                            }}
-                                        >
-                                            {unavailable ? `Unavailable` : time}
-                                        </button>
-                                    );
-                                })}
-                            </div>
-
-
-
-                            {
-                                selectedDate && selectedTime &&
-                                <section>
-                                    <form className={styles.feedForm} action="#">
-                                        <input style={{ textAlign: "center", border: "1px solid #ccc", borderRadius: "10px", borderColor: "rgb(198, 153, 134)", color: "rgb(198, 153, 134)" }} placeholder="Name" type="text"
-                                            onChange={(e) =>
-                                                setCustomerName(e.target.value)
-                                            } />
-                                        <input style={{ textAlign: "center", border: "1px solid #ccc", borderRadius: "10px", borderColor: "rgb(198, 153, 134)", color: "rgb(198, 153, 134)" }} name="phone" placeholder="Phone number"
-                                            onChange={(e) =>
-                                                setCustomerPhone(e.target.value)
-                                            } />
-                                        <input style={{ textAlign: "center", border: "1px solid #ccc", borderRadius: "10px", borderColor: "rgb(198, 153, 134)", color: "rgb(198, 153, 134)" }} name="email" placeholder="*Please enter a valid email" type="email"
-                                            onChange={(e) =>
-                                                setCustomerEmail(e.target.value)
-                                            } required
-                                        />
-                                        {/* <div style={{ textAlign: "center", color: "rgb(198, 153, 134)", marginBottom: "1rem" }}>
-                                    *Please enter a valid email
-                                    </div> */}
-                                        <input style={{ textAlign: "center", border: "1px solid #ccc", borderRadius: "10px", borderColor: "rgb(198, 153, 134)", color: "rgb(198, 153, 134)" }} name="customerNotes" placeholder="Comments/Requests" type="text"
-                                            onChange={(e) =>
-                                                setCustomerNotes(e.target.value)
-                                            } />
-                                    </form>
-                                </section>
-                            }
-
-                            {
-                                selectedDate && selectedTime && customerName && customerPhone && customerEmail && validEmail &&
-                                <div style={{ margin: "1rem" }}>
-                                    <div style={{ paddingTop: "1rem", marginLeft: "1rem", marginBottom: "1rem" }}>
-                                        *As per policy, a $20 fee is required to secure your booking
-                                    </div>
-                                    <Elements
-                                        stripe={stripePromise}
-                                        options={{
-                                            mode: "payment",
-                                            amount: 2000,
-                                            currency: "usd",
-                                        }}
-                                    >
-                                        <CheckoutPage amount={amount}
-                                            uniqueBookingID={crypto.randomUUID()}
-                                            customerEmail={customerEmail}
-                                            formattedDate={selectedDate.toLocaleDateString()}
-                                            selectedTime={selectedTime}
-                                            customerName={customerName}
-                                            customerPhone={customerPhone}
-                                            customerNotes={customerNotes}
-                                            listServices={JSON.stringify(cart)}
-                                            bookingStatus={"confirmed"}
-                                            appointmentNotes={"empty"}
-                                            endAt={endTime}
-                                        />
-                                    </Elements>
-                                </div>
-                            }
-
-                            <div style={{ paddingTop: "2rem", marginLeft: "1rem", marginRight: "1rem" }}>
-                                Please note some services may not be available at certain times, due to the length of the service.
-                            </div>
-
-                            <div style={{ paddingTop: "1rem", marginLeft: "1rem", marginRight: "1rem" }}>
-                                If you have any questions about booking, please reach out to me via DM! Thank you!
-                            </div>
-
-                            <div style={{ paddingTop: "1rem", marginLeft: "1rem", marginRight: "1rem" }}>
-                                Electronic consent forms coming soon.
-                            </div>
-                            {/* 
-                        <div style={{ margin: "auto", display: "flex", justifyContent: "center", marginTop: "3rem", marginBottom: "5rem" }}>
-                            <button className={styles.nextBtn}
-                                onClick={() => initializeBookingData()}>Proceed</button>
-                        </div> */}
-
-
-                            <div style={{ marginBottom: "8rem" }}>
-
-                            </div>
-
-                            {/* <SignaturePad
-                            name="Joseph Morelli"
-                            onSigned={(pdfUrl) => {
-                                window.open(pdfUrl, "_blank");
-                            }}
-                        /> */}
-
-
-                        </div>
-                    </div>
-                </div>
-            }
-
-            {cart.length <= 0 &&
-                <div>
-                    <div style={{ paddingTop: "2rem", marginLeft: "1rem", marginRight: "1rem" }}>
-                        That's strange, it seems like you are trying to book with no services.
-                    </div>
-                    <div style={{ paddingTop: "2rem", marginLeft: "1rem", marginRight: "1rem" }}>
-                        That is like going to the gas station and paying for air.
-                    </div>
+                    <select
+                      value={orderYear}
+                      onChange={(event) => {
+                        setOrderYear(event.target.value);
+                        setOrderDay("");
+                      }}
+                    >
+                      <option value="">Year</option>
+                      {yearOptions.map((year) => (
+                        <option key={year} value={String(year)}>
+                          {year}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
 
-            }
+                <label className={styles.formField}>
+                  Notes
+                  <textarea
+                    value={customerNotes}
+                    onChange={(event) => setCustomerNotes(event.target.value)}
+                    placeholder="Add pickup notes, design notes, flavor notes, or any special requests."
+                  />
+                </label>
 
+                {!isFormReady && (
+                  <p className={styles.helperText}>
+                    Please complete all required fields before continuing.
+                  </p>
+                )}
 
-        </div >
+                {errorMessage && (
+                  <p className={styles.errorMessage}>{errorMessage}</p>
+                )}
 
-    );
+               {orderId && (
+                  <div className={styles.successBox}>
+                    <h3>Order received</h3>
+
+                    <p>
+                      Reference:{" "}
+                      <strong>{orderId.slice(0, 8).toUpperCase()}</strong>
+                    </p>
+
+                    <p className={styles.successText}>
+                      Your order has been saved. Payment will be connected next.
+                    </p>
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  className={styles.submitButton}
+                  disabled={!isFormReady || isSubmitting || !!orderId}
+                >
+                  {isSubmitting ? "Creating Order..." : "Save Order & Continue"}
+                </button>
+              </form>
+            </section>
+          </div>
+        )}
+      </main>
+
+      <BottomSheetNav />
+    </div>
+  );
 }

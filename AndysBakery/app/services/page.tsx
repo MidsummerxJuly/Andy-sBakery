@@ -4,26 +4,28 @@ import pageCSS from "./page.module.css"
 import servicesCSS from "./services.module.css"
 import { BiMinusCircle, BiPlusCircle, BiChevronLeft, BiChevronRight } from "react-icons/bi";
 import Image from "next/image";
-import { useRouter } from "next/router";
+
 
 import { useState } from "react";
 import { useCart } from "../context/cartContext";
 
 import Link from 'next/link';
-import { duration } from "drizzle-orm/gel-core";
+
 
 
 
 const services = [
   {
-    category: "Cakes",
+    category: "Menu Cakes",
     items: [
       {
-        id: "chocolate-cake",
-        name: "Chocolate Cake",
+        id: "dulce-de-leche-peach-cake",
+        name: "Dulce de Leche & Peach Cake",
         price: 35,
         duration: 0,
-        description: "Rich chocolate cake with buttercream frosting.",
+        image: "/images/Dulce_de_Leche_&_Peach.jpg",
+        description:
+          "Cake with dulce de leche and peach flavor inspiration. Placeholder details until final menu info is confirmed.",
         sizes: [
           { size: '6" Small', price: 35, serves: "6–8" },
           { size: '8" Medium', price: 45, serves: "10–14" },
@@ -31,11 +33,13 @@ const services = [
         ],
       },
       {
-        id: "vanilla-cake",
-        name: "Vanilla Cake",
+        id: "italian-meringue-cake",
+        name: "Italian Meringue Cake",
         price: 35,
-        duration: 0,  
-        description: "Soft vanilla cake with classic frosting.",
+        duration: 0,
+        image: "/images/Italian_Meringue.jpg",
+        description:
+          "Cake finished with Italian meringue-style frosting. Placeholder details until final menu info is confirmed.",
         sizes: [
           { size: '6" Small', price: 35, serves: "6–8" },
           { size: '8" Medium', price: 45, serves: "10–14" },
@@ -43,47 +47,134 @@ const services = [
         ],
       },
       {
-        id: "cake-slice",
-        name: "Cake Slice",
-        price: 7.5,
+        id: "thousand-layer-cake",
+        name: "Thousand Layer Cake",
+        price: 35,
         duration: 0,
-        description: "Individual slice of cake. Flavor availability may vary.",
+        image: "/images/Thousand_Layer_ With_Dulce_de_Leche.jpg",
+        description:
+          "Layered cake with dulce de leche inspiration. Placeholder details until final menu info is confirmed.",
         sizes: [
-          { size: '3"', price: 7.5 },
+          { size: '6" Small', price: 35, serves: "6–8" },
+          { size: '8" Medium', price: 45, serves: "10–14" },
+          { size: '10" Large', price: 60, serves: "18–24" },
+        ],
+      },
+      {
+        id: "black-forest-cake",
+        name: "Black Forest Cake",
+        price: 35,
+        duration: 0,
+        image: "/images/selva_negra.jpg",
+        description:
+          "Black Forest-style cake with chocolate and cherry flavor inspiration. Placeholder details until final menu info is confirmed.",
+        sizes: [
+          { size: '6" Small', price: 35, serves: "6–8" },
+          { size: '8" Medium', price: 45, serves: "10–14" },
+          { size: '10" Large', price: 60, serves: "18–24" },
         ],
       },
     ],
   },
   {
-    category: "Pastries",
+    category: "Pastries & Sweets",
     items: [
       {
-        id: "croissant",
-        name: "Croissant",
-        price: 35,
+        id: "alfajores",
+        name: "Alfajores",
+        price: 3,
         duration: 0,
-        description: "Flaky butter pastry baked fresh.",
+        image: "/images/gallery11.jpg",
+        description:
+          "Sweet sandwich-style pastry. Placeholder price and description until final menu info is confirmed.",
         sizes: [
-          // { size: "Single", price: 4 },
-          // { size: "Half Dozen", price: 20 },
-          // { size: "Dozen", price: 38 },
+          { size: "Single", price: 3, serves: "1" },
+          { size: "Half Dozen", price: 16, serves: "6" },
+          { size: "Dozen", price: 30, serves: "12" },
         ],
       },
-    ],
-  },
-  {
-    category: "Bread",
-    items: [
       {
-        id: "sourdough",
-        name: "Sourdough Bread",
-        price: 35,
+        id: "empolvados",
+        name: "Empolvados",
+        price: 3,
         duration: 0,
-        description: "Fresh baked sourdough loaf.",
+        image: "/images/gallery11.jpg",
+        description:
+          "Soft sweet pastry. Placeholder price and description until final menu info is confirmed.",
         sizes: [
-          // { size: "Small", price: 6 },
-          // { size: "Medium", price: 9 },
-          // { size: "Large", price: 12 },
+          { size: "Single", price: 3, serves: "1" },
+          { size: "Half Dozen", price: 16, serves: "6" },
+          { size: "Dozen", price: 30, serves: "12" },
+        ],
+      },
+      {
+        id: "berlines",
+        name: "Berlines",
+        price: 3.5,
+        duration: 0,
+        image: "/images/gallery11.jpg",
+        description:
+          "Sweet filled pastry. Placeholder price and description until final menu info is confirmed.",
+        sizes: [
+          { size: "Single", price: 3.5, serves: "1" },
+          { size: "Half Dozen", price: 19, serves: "6" },
+          { size: "Dozen", price: 36, serves: "12" },
+        ],
+      },
+      {
+        id: "fruit-tart",
+        name: "Fruit Tart",
+        price: 4,
+        duration: 0,
+        image: "/images/gallery10.jpg",
+        description:
+          "Fruit tart dessert with fresh fruit presentation. Placeholder price until final menu info is confirmed.",
+        sizes: [
+          { size: "Single", price: 4, serves: "1" },
+          { size: "Half Dozen", price: 22, serves: "6" },
+          { size: "Dozen", price: 42, serves: "12" },
+        ],
+      },
+      {
+        id: "chilenitos",
+        name: "Chilenitos",
+        price: 3,
+        duration: 0,
+        image: "/images/gallery11.jpg",
+        description:
+          "Traditional sweet pastry. Placeholder price and description until final menu info is confirmed.",
+        sizes: [
+          { size: "Single", price: 3, serves: "1" },
+          { size: "Half Dozen", price: 16, serves: "6" },
+          { size: "Dozen", price: 30, serves: "12" },
+        ],
+      },
+      {
+        id: "cuchufli",
+        name: "Cuchuflí",
+        price: 2.5,
+        duration: 0,
+        image: "/images/gallery11.jpg",
+        description:
+          "Sweet rolled treat. Placeholder price and description until final menu info is confirmed.",
+        sizes: [
+          { size: "Single", price: 2.5, serves: "1" },
+          { size: "Half Dozen", price: 14, serves: "6" },
+          { size: "Dozen", price: 26, serves: "12" },
+        ],
+      },
+      {
+        id: "brazo-de-reina",
+        name: "Brazo de Reina / Brazo Gitano",
+        price: 4,
+        duration: 0,
+        image: "/images/menu1.jpg",
+        description:
+          "Rolled cake dessert. Placeholder price and description until final menu info is confirmed.",
+        sizes: [
+          { size: "Slice", price: 4, serves: "1" },
+          { size: "Half Roll", price: 20, serves: "4–6" },
+          { size: "Whole Roll", price: 38, serves: "8–12" },
         ],
       },
     ],
@@ -94,9 +185,11 @@ const services = [
       {
         id: "custom-cake",
         name: "Custom Cake Order",
-        price:50,
+        price: 50,
         duration: 0,
-        description: "Custom pricing depends on size, flavor, and design.",
+        image: "/images/gallery13.jpg",
+        description:
+          "Custom pricing depends on size, flavor, filling, frosting, and design complexity.",
         sizes: [
           {
             size: "Basic",
@@ -130,6 +223,7 @@ export default function Services() {
   // const router = useRouter() // used for cleaner redirects as buttons
   const [openCategory, setOpenCategory] = useState<string | null>(null);
   const [openItem, setOpenItem] = useState<string | null>(null);
+  const [recentlyAddedItem, setRecentlyAddedItem] = useState<string | null>(null);
   const [quantityInputs, setQuantityInputs] = useState<{ [key: string]: string }>({});
   const [activeQtyEditor, setActiveQtyEditor] = useState<{
     id: string;
@@ -310,14 +404,20 @@ const [customOptionPage, setCustomOptionPage] = useState<{ [key: string]: number
                             <span>{item.name}</span>
 
                             <span className={servicesCSS.itemArrow}>
-                              {openItem === item.id ? "▴" : "▾"}
+                              {openItem === item.id ? "Hide details" : "Click for details"}
                             </span>
                           </button>
 
                         {openItem === item.id && (
                           <div className={servicesCSS.productCardGrid}>
-                            <div className={servicesCSS.productImagePlaceholder}>
-                              🧁
+                            <div className={servicesCSS.productImageWrap}>
+                              <Image
+                                src={item.image}
+                                alt={item.name}
+                                width={420}
+                                height={320}
+                                className={servicesCSS.productImage}
+                              />
                             </div>
 
                             <div className={servicesCSS.productDetails}>
@@ -478,22 +578,29 @@ const [customOptionPage, setCustomOptionPage] = useState<{ [key: string]: number
                           onClick={() => {
                             const quantity = Number(quantityInputs[item.id] || 1);
 
-                            updateQuantity(
-                              {
-                                id: item.id,
-                                name: currentSize
-                                  ? `${item.name} - ${currentSize.size}`
-                                  : item.name,
-                                price: currentSize?.price ?? item.price ?? 0,
-                                duration: item.duration || 0,
-                                quantity: 1,
-                              },
-                              quantity > 0 ? quantity : 1
-                            );
+                            addToCart({
+                              id: item.id,
+                              name: currentSize
+                                ? `${item.name} - ${currentSize.size}`
+                                : item.name,
+                              price: currentSize?.price ?? item.price ?? 0,
+                              duration: item.duration || 0,
+                              quantity: quantity > 0 ? quantity : 1,
+                            });
+                            setRecentlyAddedItem(item.id);
+                            window.setTimeout(() => {
+                              setRecentlyAddedItem((currentItem) =>
+                                currentItem === item.id ? null : currentItem
+                              );
+                            }, 1200);
                           }}
-                          className={servicesCSS.orderAddButton}
-                        >
-                          Add to Basket
+                          className={`${servicesCSS.orderAddButton} ${
+                            recentlyAddedItem === item.id
+                              ? servicesCSS.orderAddButtonAdded
+                              : ""
+                          }`}
+                          >
+                            {recentlyAddedItem === item.id ? "Added ✓" : "Add to Basket"}
                         </div>
                       </div>
                     )}

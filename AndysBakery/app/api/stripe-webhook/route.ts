@@ -1,48 +1,71 @@
-import { NextResponse } from "next/server";
-import Stripe from "stripe";
-import nodemailer from "nodemailer";
-import { useBooking } from "@/app/context/bookingContext";
-import { date } from "drizzle-orm/mysql-core";
-import { appointmentsTable } from "@/app/db/schema";
 import { db } from "@/app/db";
-import { eq } from 'drizzle-orm';
+import {
+  customersTable,
+  ordersTable,
+  orderItemsTable,
+  paymentTable,
+} from "@/app/db/schema";
+import { eq } from "drizzle-orm";
+import { NextResponse } from "next/server";
+import nodemailer from "nodemailer";
+import Stripe from "stripe";
 
+function formatMoney(cents: number) {
+  return `$${(cents / 100).toFixed(2)}`;
+}
 
+function formatReference(id: string) {
+  return id.slice(0, 8).toUpperCase();
+}
 
+function formatDate(value: string) {
+  if (!value) return "No date selected";
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.hostinger.com",
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
+  const [year, month, day] = value.split("-");
+
+  if (!year || !month || !day) {
+    return value;
+  }
+
+  return `${month}/${day}/${year}`;
+}
+
+function getMailer() {
+  const host = process.env.SMTP_HOST;
+  const port = Number(process.env.SMTP_PORT || 465);
+  const user = process.env.SMTP_USER;
+  const pass = process.env.SMTP_PASS;
+
+  if (!host || !user || !pass) {
+    return null;
+  }
+
+  return nodemailer.createTransport({
+    host,
+    port,
+    secure: port === 465,
+    auth: {
+      user,
+      pass,
+    },
+  });
+}
 
 export async function POST(req: Request) {
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+  const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
+  if (!stripeSecretKey || !webhookSecret) {
+    return NextResponse.json(
+      { error: "Stripe webhook is not configured" },
+      { status: 500 }
+    );
+  }
 
+  const stripe = new Stripe(stripeSecretKey);
 
   const body = await req.text();
   const signature = req.headers.get("stripe-signature");
-
-  type BookingData = {
-    id: string;
-    customer_name: string;
-    customer_phone: string;
-    customer_email: string;
-    service_names: string;
-    start_at: string;
-    end_at: string;
-    status: string;
-    appointment_notes: string;
-    customer_notes: string;
-    created_at: number;
-    booking_date: string;
-  }
-
 
   if (!signature) {
     return NextResponse.json(
@@ -54,13 +77,9 @@ export async function POST(req: Request) {
   let event: Stripe.Event;
 
   try {
-    event = stripe.webhooks.constructEvent(
-      body,
-      signature,
-      process.env.STRIPE_WEBHOOK_SECRET!
-    );
-  } catch (err) {
-    console.error("Webhook signature failed:", err);
+    event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
+  } catch (error) {
+    console.error("Webhook signature failed:", error);
 
     return NextResponse.json(
       { error: "Invalid Stripe signature" },
@@ -68,174 +87,185 @@ export async function POST(req: Request) {
     );
   }
 
-  if (event.type === "payment_intent.succeeded") {
-    const paymentIntent = event.data.object as Stripe.PaymentIntent;
+  try {
+    if (event.type === "checkout.session.completed") {
+      const session = event.data.object as Stripe.Checkout.Session;
+      const orderId = session.metadata?.orderId;
 
-    const {
-      uniqueBookingID,
-      customerName,
-      customerPhone,
-      customerEmail,
-      listServices,
-      selectedTime,
-      endAt,
-      bookingStatus,
-      appointmentNotes,
-      customerNotes,
-      // createdAt,
-      formattedDate
-
-    } = paymentIntent.metadata;
-
-
-    const createdAt = Date.now();
-    const newBooking: BookingData = {
-      id: uniqueBookingID,
-      customer_name: customerName,
-      customer_phone: customerPhone,
-      customer_email: customerEmail,
-      service_names: listServices,
-      start_at: selectedTime,
-      end_at: endAt,
-      status: bookingStatus,
-      appointment_notes: appointmentNotes,
-      customer_notes: customerNotes,
-      created_at: createdAt,
-      booking_date: formattedDate
-    };
-
-    // console.log("service ends at this time inside the webhook" + endAt);
-    // console.log("notes are: " + customerNotes);
-    try {
-      const res = await fetch('https://luxxbeebeauty.com/api/appointments', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newBooking),
-      });
-
-      if (!res.ok) {
-        throw new Error('Failed to create appointment');
+      if (!orderId) {
+        return NextResponse.json(
+          { error: "Missing orderId in Stripe metadata" },
+          { status: 400 }
+        );
       }
 
-      const data = await res.json();
-      console.log("Success:", data);
+      await db.transaction(async (tx) => {
+        await tx
+          .update(ordersTable)
+          .set({
+            payment_status: "paid",
+            order_status: "received",
+          })
+          .where(eq(ordersTable.id, orderId));
 
-    } catch (err) {
-      console.log("Error:", err);
+        await tx
+          .update(paymentTable)
+          .set({
+            status: "paid",
+            stripe_payment_id:
+              typeof session.payment_intent === "string"
+                ? session.payment_intent
+                : session.id,
+          })
+          .where(eq(paymentTable.order_id, orderId));
+      });
+
+      const [orderDetails] = await db
+        .select({
+          orderId: ordersTable.id,
+          totalCents: ordersTable.total_cents,
+          paymentStatus: ordersTable.payment_status,
+          orderStatus: ordersTable.order_status,
+          fulfillmentType: ordersTable.fulfillment_type,
+          orderDate: ordersTable.order_date,
+          customerNotes: ordersTable.customer_notes,
+
+          customerName: customersTable.customer_name,
+          customerPhone: customersTable.customer_phone,
+          customerEmail: customersTable.customer_email,
+        })
+        .from(ordersTable)
+        .leftJoin(customersTable, eq(ordersTable.customer_id, customersTable.id))
+        .where(eq(ordersTable.id, orderId))
+        .limit(1);
+
+      const items = await db
+        .select()
+        .from(orderItemsTable)
+        .where(eq(orderItemsTable.order_id, orderId));
+
+      const mailer = getMailer();
+
+      if (mailer && orderDetails) {
+        const bakeryEmail = process.env.BAKERY_ORDER_EMAIL;
+        const fromEmail = process.env.SMTP_USER;
+        const orderReference = formatReference(orderDetails.orderId);
+
+        const itemsHTML = items
+          .map((item) => {
+            return `
+              <tr>
+                <td style="padding: 10px; border: 1px solid #eee;">
+                  <strong>${item.item_name}</strong><br />
+                  ${item.category}${item.size ? ` · ${item.size}` : ""}
+                </td>
+                <td style="padding: 10px; border: 1px solid #eee; text-align: center;">
+                  x${item.quantity}
+                </td>
+                <td style="padding: 10px; border: 1px solid #eee; text-align: right;">
+                  ${formatMoney(item.line_total_cents)}
+                </td>
+              </tr>
+            `;
+          })
+          .join("");
+
+        const bakeryEmailHTML = `
+          <div style="font-family: Arial, sans-serif; color: #3c2a1e; max-width: 650px; margin: 0 auto;">
+            <h2>New Paid Bakery Order</h2>
+
+            <p><strong>Order Reference:</strong> ${orderReference}</p>
+            <p><strong>Customer:</strong> ${orderDetails.customerName}</p>
+            <p><strong>Phone:</strong> ${orderDetails.customerPhone}</p>
+            <p><strong>Email:</strong> ${orderDetails.customerEmail}</p>
+            <p><strong>Requested Date:</strong> ${formatDate(orderDetails.orderDate)}</p>
+            <p><strong>Fulfillment:</strong> ${orderDetails.fulfillmentType}</p>
+            <p><strong>Total Paid:</strong> ${formatMoney(orderDetails.totalCents)}</p>
+
+            <h3>Items</h3>
+
+            <table style="width: 100%; border-collapse: collapse;">
+              <thead>
+                <tr>
+                  <th style="padding: 10px; border: 1px solid #eee; text-align: left;">Item</th>
+                  <th style="padding: 10px; border: 1px solid #eee;">Qty</th>
+                  <th style="padding: 10px; border: 1px solid #eee; text-align: right;">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${itemsHTML}
+              </tbody>
+            </table>
+
+            ${
+              orderDetails.customerNotes
+                ? `<h3>Customer Notes</h3><p>${orderDetails.customerNotes}</p>`
+                : ""
+            }
+
+            <p style="margin-top: 24px;">View this order in the admin dashboard.</p>
+          </div>
+        `;
+
+        const customerEmailHTML = `
+          <div style="font-family: Arial, sans-serif; color: #3c2a1e; max-width: 650px; margin: 0 auto;">
+            <h2>Thank you for your order!</h2>
+
+            <p>Hi ${orderDetails.customerName},</p>
+
+            <p>Andy&apos;s Bakery received your order and payment successfully.</p>
+
+            <p><strong>Order Reference:</strong> ${orderReference}</p>
+            <p><strong>Requested Date:</strong> ${formatDate(orderDetails.orderDate)}</p>
+            <p><strong>Total Paid:</strong> ${formatMoney(orderDetails.totalCents)}</p>
+
+            <h3>Your Items</h3>
+
+            <table style="width: 100%; border-collapse: collapse;">
+              <tbody>
+                ${itemsHTML}
+              </tbody>
+            </table>
+
+            <p style="margin-top: 24px;">
+              The bakery will review your order and contact you if anything needs confirmation.
+            </p>
+
+            <p>Thank you,<br />Andy&apos;s Bakery</p>
+          </div>
+        `;
+
+        if (bakeryEmail && fromEmail) {
+          await mailer.sendMail({
+            from: `"Andy’s Bakery Orders" <${fromEmail}>`,
+            to: bakeryEmail,
+            subject: `New paid order #${orderReference}`,
+            html: bakeryEmailHTML,
+          });
+        }
+
+        if (fromEmail && orderDetails.customerEmail) {
+          await mailer.sendMail({
+            from: `"Andy’s Bakery" <${fromEmail}>`,
+            to: orderDetails.customerEmail,
+            subject: `Your Andy’s Bakery order #${orderReference}`,
+            html: customerEmailHTML,
+          });
+        }
+      } else {
+        console.log("Email notifications skipped: SMTP not configured.");
+      }
+
+      console.log(`Order ${orderId} marked as paid and notification processed.`);
     }
 
+    return NextResponse.json({ received: true });
+  } catch (error) {
+    console.error("Webhook failed:", error);
 
-    // Initiate booking creation time and unique booking ID 
-    // note to self
-    // instead of calling it the bookingcontext logic, i just moved it over here instead bcause accessing the bookingcontext (client) from here is not allowed (server)
-    // addBooking(uniqueBookingID, customerName, customerPhone, customerEmail, listServices, selectedTime, endAt, bookingStatus, appointmentNotes, customerNotes, createdAt, formattedDate);
-
-
-    const services = JSON.parse(listServices);
-
-    const servicesHTML = services
-      .map((service: any) => {
-        return `
-      <div>
-        <strong>${service.name}</strong> (${service.duration} mins)
-      </div>
-    `;
-      })
-      .join("");
-
-
-    await transporter.sendMail({
-      from: `"LuxxBeeBeauty" <${process.env.SMTP_USER}>`,
-      to: customerEmail,
-      subject: "[TEST] Appointment Confirmed",
-      html: `
-        <h2>Appointment Confirmed</h2>
-        <p>Your booking has been confirmed.</p>
-        <p><strong>Date:</strong> ${formattedDate}</p>
-        <p><strong>Time:</strong> ${selectedTime}</p>
-        <p><strong>Booking ID:</strong> ${uniqueBookingID}</p>
-      `,
-    });
-
-    await transporter.sendMail({
-      from: `"LuxxBeeBeauty" <${process.env.SMTP_USER}>`,
-      // to: "luxxbeebeauty@gmail.com",
-      to: "business@luxxbeebeauty.com",
-      subject: "[TEST] You have received a client booking",
-      html: `
-            <h2>Hi Eyrkah, a client has booked with you please review their details and the following service(s):</h2>
-           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #222;">
-            <h2 style="text-align: center; color: #111;">Appointment Confirmed</h2>
-    <p>Thank you for booking with LuxxBeeBeauty! Here are your appointment details:</p>
-  <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-    <tr>
-      <td style="border: 1px solid #ddd; padding: 12px; font-weight: bold; background: #f7f7f7;">
-        Booking ID
-      </td>
-      <td style="border: 1px solid #ddd; padding: 12px;">
-        ${uniqueBookingID}
-      </td>
-    </tr>
-
-    <tr>
-      <td style="border: 1px solid #ddd; padding: 12px; font-weight: bold; background: #f7f7f7;">
-        Date
-      </td>
-      <td style="border: 1px solid #ddd; padding: 12px;">
-        ${formattedDate}
-      </td>
-    </tr>
-
-    <tr>
-      <td style="border: 1px solid #ddd; padding: 12px; font-weight: bold; background: #f7f7f7;">
-        Time
-      </td>
-      <td style="border: 1px solid #ddd; padding: 12px;">
-        ${selectedTime}
-      </td>
-    </tr>
-
-    <tr>
-      <td style="border: 1px solid #ddd; padding: 12px; font-weight: bold; background: #f7f7f7;">
-        Service(s) 
-      </td>
-      <td style="border: 1px solid #ddd; padding: 12px;">
-        ${servicesHTML}
-      </td>
-    </tr>
-
-    <tr>
-      <td style="border: 1px solid #ddd; padding: 12px; font-weight: bold; background: #f7f7f7;">
-        Status
-      </td>
-      <td style="border: 1px solid #ddd; padding: 12px;">
-        Confirmed
-      </td>
-    </tr>
-
-    <tr>
-      <td style="border: 1px solid #ddd; padding: 12px; font-weight: bold; background: #f7f7f7;">
-        Customer Notes/Requests
-      </td>
-      <td style="border: 1px solid #ddd; padding: 12px;">
-        ${customerNotes}
-      </td>
-    </tr>
-  </table>
-
-  <p style="margin-top: 20px;">
-    If it looks like something is wrong, it probably is LOL, text me.
-  </p>
-
-  <p style="font-size: 12px; color: #777; text-align: center; margin-top: 30px;">
-    LuxxBeeBeauty
-  </p>
-</div>`
-    });
-
+    return NextResponse.json(
+      { error: "Webhook failed to process order" },
+      { status: 500 }
+    );
   }
-
-  return NextResponse.json({ received: true });
 }
